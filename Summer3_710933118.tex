@@ -1,0 +1,810 @@
+%\input{../Jiang_Preamble}
+%\title{\MJHmarker MATLAB實作 \\ \Large{\color{darkblue}{統計分配}}}
+%\author{{\MJH 江柏學}}
+%\date{\today}  
+%\newtheorem{ex}{{\Cam Example}}
+%\begin{document}
+%	\maketitle
+%	\fontsize{12}{22pt}\selectfont
+\chapter{ \MJH MATLAB實作之統計分配}
+	MATLAB在處理各種數學函數上，有不盡其數的語法能使用，甚至在繪圖上，皆不亞於其他程式語言，而今日		也在此以MATLAB為主要示範語法，來著手其在\textbf{\color{darkblue}{函數展現}}，					\textbf{\color{darkblue}{繪圖討論}}，\textbf{\color{darkblue}{亂數產生}}等等方面之應			用，除了討論基本語法的變化，繪圖美觀的琢磨，更討論函數圖形在統計上的意義，介紹在不同參數下，各個		分配變化多端的樣貌！\\
+	\bigskip
+	\section{分配函數}
+		在統計學上，充滿各種不同類型的分配，每個分配都有各自獨樹一幟的絕美風貌，更是各自帶著專屬於			自己的參數，而每個參數的組成，又能形成各種各樣的不同分配形狀，這也是統計的迷人所在，而以下			也將討論各種不同的分配，如何利用MATLAB呈現，而不同的參數，又是如何形成新的圖形樣貌：
+		\subsection{連續型函數}
+			本文所討論的，又可稱作連續型隨機變數，在統計上，連續的分配涵蓋各式各樣層面，有在生活中				常見的\textbf{\color{darkblue}{常態分配}}，檢定中佔據重要地位的								\textbf{\color{darkblue}{卡方分配}}，亦或是變化多端的\textbf{\color{darkblue}				{貝塔分配}}，都屬於連續型的一種，而以下也配合幾種範例，展示MATLAB在統計函數上的使用，				以及各式分配的樣貌：
+			\begin{enumerate}			
+				\item{\textbf{\MJHmarker{常態分配:}}\\
+					常態分布有兩個參數，分別為\textbf{\color{darkblue}{位置參數}									\emph{(location)}}\quad $\mu$、\textbf{\color{darkblue}{尺度參數}							\emph{(scale)}}\quad $\sigma$。當$\mu = 0$且$\sigma = 1$時，就稱為標						準常態分布。
+
+					令$X$為一連續隨機變數，若$X$符合常態分布，其機率密度分布函數(P.D.F)為：
+					$$f(x)=\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu)^2}									{2\sigma^2}}, \;\; -\infty < x < \infty $$	
+					\\
+					常態分布的機率密度函數圖形：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir normal01.jpg} 
+   			 			\caption{常態分配$\mu = 0 , \sigma = 1$}   		
+   			 			\label{normal01}   			 		 
+					\end{figure}
+					\bigskip
+					圖\ref{normal01} 是當$\mu = 0$且$\sigma = 1$時的常態分佈圖形，可看出其						鐘型分布的樣子，且至高點即是平均數$\mu$，而在3個標準差中，包含了絕大部分的資						料，而如此函數呈現，在MATLAB上僅需短短幾行程式碼：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+							f=@(x) normpdf(x,0,1);\\
+							fplot(f,'LineWidth',3);\\
+							grid;\\
+							legend('$\backslash$mu = 0 , $\backslash$sigma = 1');\\
+							title("Normal Dist.");\\
+							xlabel("x");\\
+							ylabel("f(x)");\\
+							ylim([0 0.5]);\\
+							set(gca,'fontsize',16);	\\			
+						\end{tabular}
+					}
+					\end{center}
+					\bigskip				
+					除此之外，我們熟知變異數越大時，常態分配圖形呈現越為矮胖，而當變異數越小時，						常態分配則是越為高瘦，而此參數變化，我們也能以MATLAB呈現，如圖									\ref{normal_multi}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir normal_multi.jpg} 
+   			 			\caption{多種常態分配}   		
+   			 			\label{normal_multi}   			 		 
+					\end{figure}
+					\bigskip
+					在MATLAB應用上，加入\textbf{\color{darkblue}{for迴圈}}的使用，讓多種不						同參數的程式碼，更加簡潔：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+							figure,hold on;\\
+							for i = 1:5\\
+    							\quad f=@(x) normpdf(x,0,i);\\
+   							 	\quad fplot(f,[-15 15],'LineWidth',3);\\
+							end\\
+							legend('$\backslash$sigma = 1','$\backslash$sigma = 2','$								\backslash$sigma = 3','$\backslash$sigma =4','$\backslash								$sigma = 5');\\
+							title("Normal Dist.");\\
+							xlabel("x");\\
+							ylabel("f(x)");\\
+							ylim([0 0.5]);\\
+							set(gca,'fontsize',20);\\
+							grid;\\
+							hold off;	\\	
+						\end{tabular}
+					}
+					\end{center}
+				}	
+				\rule{\textwidth}{0.2pt}
+				\item{\textbf{\MJHmarker{T分配:}}\\
+					在機率論和統計學中，\textbf{\color{darkblue}{司徒頓t-分布}									\emph{（Student's t-distribution）}}可簡稱為\textbf{\color{darkblue}						{t分	布}}，用於根據小樣本來估計呈常態分布且變異數未知的總體的平均值。如果總體						變異數已知（例如在樣本數量足夠多時），則應該用常態分布來估計總體均值。
+					\\
+					\\
+					在上述例子中提及，常態分配在$\mu = 0$，$\sigma=1$的情況下，又可稱作							\textbf{\color{darkblue}{標準常態分配}}，而當T分配中，										\textbf{\color{darkblue}{自由度}}在$30$以上時，圖形呈現非常趨近標準常							態分配，如此函數關係，我們可以簡單的從MATLAB中觀察出來，但在這之前，我們得先						對於T分配的函數圖形有所了解，並且熟悉參數(自由度)改變時，T分配會如何變化，而						圖\ref{t}是當自由度由0.1至1時的變化：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir t.jpg} 
+   			 			\caption{T分配(自由度由$0.1$至$1$)}   		
+   			 			\label{t}   			 		 
+					\end{figure}
+					而我們一樣由迴圈可以簡單完成不同參數的T分配，其中此分配的										\textbf{\color{darkblue}{\emph{（KEY WORD）}}}為\textbf{tpdf}，而其						在MATLAB上程式碼如下：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+							figure, hold on;grid;\\    						
+   							title("自由度(v)0.1至1");sInterval=[-5 5];\\  
+   							nu=[0.1:0.2:1]; n=length(nu);\\						    
+						    for i=1:n\\
+						        \quad f=@(x) tpdf(x,nu(i));  \\       
+						        \quad fplot(f,sInterval,'LineWidth',2); \\        
+						    end    \\
+						    legend('v=0.1','v=0.3','v=0.5','v=0.7','v=0.9');\\
+						    set(gca,'fontsize',20);hold off    \\
+						\end{tabular}
+					}
+					\end{center}
+					\bigskip
+					nu在此例為自由度的參數名稱，因此，由圖\ref{t}我們熟悉了T分配，當自由度越大						時，分配資料越往中心點趨近，而我們更有興趣在自由度為$30$或自由度更大時，T分						配和標準常態分配在圖形上的差異，而以MATLAB做圖形上驗證，如圖									\ref{t_normal}：
+					\\
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir t_normal.jpg} 
+   			 			\caption{T分配趨近標準常態分配)}   		
+   			 			\label{t_normal}   			 		 
+					\end{figure}
+					\bigskip
+					圖\ref{t_normal}中，紅色線段為標準常態分配，而藍色線段為T分配中，自由度由						$0.1$至$30$的變化，可看出當自由度越大時，分配圖形越接近標準常態分配的圖							形，也驗證統計學內所描述的內容。	
+				}	
+				\\
+				\item{\textbf{\MJHmarker{卡方分配:}}\\
+					\textbf{\color{darkblue}{卡方分布}\emph{（chi-square 										distribution）}},或寫作$x^2$分布是機率論與統計學中常用的一種機率分布。k個						獨立的標準常態分布變數的平方和服從自由度為k的卡方分布。卡方分布是一種特殊的						\textbf{\color{darkblue}{伽瑪分布}}，是統計推斷中應用最為廣泛的機率分布之						一，例如\textbf{\color{darkblue}{假設檢驗}}和\textbf{\color{darkblue}						{信賴區間}}的計算。
+					\bigskip
+					\\
+					令$X$為一連續隨機變數，若$X$符合卡方分布，且在自由度為k的情形下，其機率密度						分布函數(P.D.F)為：
+					$$f_k(x)=\frac{\frac{1}{2}^{\frac{k}{2}}}{\gamma (\frac{k}{2})} 						x^{\frac{k}{2}-1} e^{\frac{-x}{2}} $$
+					卡方分布的機率密度函數圖形：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir chi2.jpg} 
+   			 			\caption{卡方分配，自由度為5}   		
+   			 			\label{chi2}   			 		 
+					\end{figure}					
+					圖\ref{chi2}可看出，卡方分配在正常的情況下，為一右偏機率密度函數，而繪製此						圖，利用MATLAB中的\textbf{chi2pdf}即可完成，如下所示：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+							figure, hold on;    \\
+    						title("卡方分配，自由度為5")\\
+   							xInterval = [0 20];grid;\\   
+   							f=@(x) chi2pdf(x,5);\\         
+    						fplot(f,xInterval,'LineWidth',2.5,'color','blue'); \\
+   							set(gca,'fontsize',20);hold off\\ 
+						\end{tabular}
+					}
+					\end{center}
+					\bigskip
+					其中，我們知道卡方是有標準常態分配的平方轉換而成的分布，在數學上恆正，因此我						們只關心在X軸中，大於0的部分，而此例中，參數(自由度)設為$5$，為一特殊例子，						我們更有興趣在自由度不同時，此分配會有何表現，因此同樣利用MATLAB，實驗結果如						圖\ref{chi2_multi}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir chi2_multi.jpg} 
+   			 			\caption{卡方分配，自由度(v)的變化}   		
+   			 			\label{chi2_multi}   			 		 
+					\end{figure}
+					
+					其中，程式語法如下：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+							figure, hold on; \\
+    						title("卡方分配，自由度(v)的變化")\\
+    						nu=[5:5:30]; n=length(nu);\\
+   							xInterval = [0 max(nu)*2];\\
+   							for i=1:n\\
+     						\quad	f=@(x) chi2pdf(x,nu(i));   \\      
+     						\quad    fplot(f,xInterval,'LineWidth',2.5);  \\       
+   							end \\
+   							legend('v=5','v=10','v=15','v=20','v=25','v=30');\\
+   							grid;        \\
+   							set(gca,'fontsize',20); \\
+   							hold off\\
+						\end{tabular}
+					}
+					\end{center}
+					由圖\ref{chi2_multi}可看出，卡方分配的自由度越大時，整個分配逐漸向右移動，						由右偏的機率密度函數，隨著自由度增加，逐漸趨近左偏的機率密度函數。
+										
+				}				
+				\item{\textbf{\MJHmarker{F分配:}}\\
+					F分布是美國統計學家為了彰顯英國統計學家費雪對統計的貢獻，以費雪名字開頭的字						母，當作這類型分布的名稱。以F分布為基礎，所衍生出的檢定方法，如									\textbf{\color{darkblue}{變方分析}}中的\textbf{\color{darkblue}{F檢						定}}及兩族群\textbf{\color{darkblue}{變方相等性檢定}}等，都是各領域的學						者經常使用的統計檢定。\\
+					
+					而此分布也是由上述中的卡方分布衍伸而來，在兩卡方分布中，各自除去自己的自由度						後再相除，即得到F分配，因此F分配和卡方相同皆恆正，而此特殊分布圖形如圖							\ref{f}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir f.jpg} 
+   			 			\caption{F分配，自由度為(5,6)}   		
+   			 			\label{f}   			 		 
+					\end{figure}
+					其中，程式語法如下：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+							f = @(x) fpdf(x,5,6);\\
+							fplot(f,[0,6],'LineWidth',3);\\
+							ylim([0 1]);\\
+							grid;  \\
+							title("F Dist.");\\
+							set(gca,'fontsize',20); \\
+							legend;    \\
+						\end{tabular}
+					}
+					\end{center}
+					\bigskip
+					我們知道，F分配藉由兩項自由度所控制，圖\ref{f}設定為$(5,6)$為一特殊例子，我						們更有興趣的是，當自由度有不同變化時，F分配會有何表現，因此，透過MATLAB實							驗，分成以下3種討論形式：
+					\begin{enumerate}
+						\item{自由度(1) $>$ 自由度(2)\\
+							我們假設第一個自由度大於第二個自由度，並觀察當第一個自由度越大時，函								數圖形會有何種表現，如圖\ref{f1}：
+							\begin{figure}[H]	
+		 		 				\centering	 			 	 
+   				 				\includegraphics[width=1\textwidth]{\imgdir f1.jpg} 
+   			 					\caption{F分配，自由度(1)>自由度(2)}   		
+   			 					\label{f1}   			 		 
+							\end{figure}
+							由圖\ref{f1}可觀察出，當第一項自由度越大時，分配會逐漸向座標軸的右								下所移動。							
+						}
+						\item{自由度(1) $=$ 自由度(2)\\
+							我們假設第一個自由度等於第二個自由度，並另自由度由$5$至$30$，觀察兩								自由度相等，且同時變大時，函數圖形會有何種表現，如圖\ref{f2}：
+							\begin{figure}[H]	
+		 		 				\centering	 			 	 
+   				 				\includegraphics[width=1\textwidth]{\imgdir f2.jpg} 
+   			 					\caption{F分配，自由度(1)=自由度(2)}   		
+   			 					\label{f2}   			 		 
+							\end{figure}
+							圖\ref{f2}可以明顯看出，函數圖形明顯趨於集中，且圖形分布逐漸向座標								軸右邊移動。
+						}
+						\item{自由度(1) $<$ 自由度(2)\\
+							同理，我們假設第一個自由度小於第二個自由度，觀察函數圖形如圖										\ref{f3}：
+							\begin{figure}[H]	
+		 		 				\centering	 			 	 
+   				 				\includegraphics[width=1\textwidth]{\imgdir f3.jpg} 
+   			 					\caption{F分配，自由度(1)<自由度(2)}   		
+   			 					\label{f3}   			 		 
+							\end{figure}
+							圖\ref{f3}中，隨著第二個自由度增大，函數呈現向座標軸右上移動。		
+						}						
+					\end{enumerate}
+					
+					綜合以上三種圖形，可發現F分配大致分布如圖\ref{f4}呈現之樣貌：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir f4.jpg} 
+   			 			\caption{F分配}   		
+   			 			\label{f4}   			 		 
+					\end{figure}					
+					其中，程式語法如下：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+							 figure,hold on; \\
+							 v1 = [5:5:30];v2 = [5:5:30];\\							 
+							 for i=1:length(v1)\\
+   							 \quad	for j=1:length(v2)\\
+      						\quad \quad  f = @(x) fpdf(x,v1(i),v2(j));\\
+      						\quad \quad	  fplot(f,[0,2],'LineWidth',3,'color','b');\\
+      						\quad \quad	  pause(0.3);\\
+    						\quad	end\\
+							 end\\
+							 grid;ylim([0 1.5]);title("F Dist."); \\
+							 set(gca,'fontsize',20);hold off;  \\ 
+						\end{tabular}
+					}
+					\end{center}
+				}
+				\item{\textbf{\MJHmarker{貝塔分配:}}\\
+					貝塔分配($\beta$ 分配)，在函數圖形上，有各式各樣的風貌，包括左偏，右偏，甚						至均勻分配，其中改變其分配形狀的主要依據，就是來自參數$\alpha$ 以及$\beta$ 					，我們甚至也可以知道，當$\alpha$ 和$\beta$ 的大小關係改變，會造成圖形如何						的變化，因此我們和上述一樣區分成3種討論形式：
+					\begin{enumerate}
+						\item{$\alpha > \beta$\\
+							我們假設$\alpha > \beta$，並觀察當$\beta$ 越來越接近$\alpha$ 								時，函數圖形會有何種表現，如圖\ref{beta1}：
+							\begin{figure}[H]	
+		 		 				\centering	 			 	 
+   				 				\includegraphics[width=1\textwidth]{\imgdir beta1.jpg} 
+   			 					\caption{$\beta$ 分配($\alpha > \beta$)}   		
+   			 					\label{beta1}   			 		 
+							\end{figure}
+							由圖\ref{beta1}可觀察出，當$\beta$ 越趨近$\alpha$ 但同時不超過								$\alpha$ 時，分配中左偏傾向，會越來越不明顯，高峰逐漸向原點移動。					
+						}
+						\item{$\alpha = \beta$\\
+							我們假設$\alpha = \beta$，並另兩者同時由$1$至$9$遞增，觀察兩								參數相等，且同時變大時，函數圖形會有何種表現，如圖\ref{beta2}：
+							\begin{figure}[H]	
+		 		 				\centering	 			 	 
+   				 				\includegraphics[width=1\textwidth]{\imgdir beta2.jpg} 
+   			 					\caption{$\beta$ 分配($\alpha = \beta$)}   		
+   			 					\label{beta2}   			 		 
+							\end{figure}
+							圖\ref{beta2}可以明顯看出，當參數同時為$1$時，圖形形成均勻分配，								而參數同時遞增時，函數圖形明顯向中心點集中，並且對稱。
+						}
+						\item{$\alpha < \beta$\\%到這
+							同理，我們假設$\alpha < \beta$，並且同時遞增$\beta$ 讓兩參數差距								逐漸拉大，觀察函數圖形如圖\ref{beta3}：
+							\begin{figure}[H]	
+		 		 				\centering	 			 	 
+   				 				\includegraphics[width=1\textwidth]{\imgdir beta3.jpg} 
+   			 					\caption{$\beta$ 分配($\alpha < \beta$)}   		
+   			 					\label{beta3}   			 		 
+							\end{figure}
+							圖\ref{beta3}中，隨著$\beta$ 增大，函數逐漸右偏，高峰逐漸向原點移								動，偏態越來越明顯。		
+						}		
+						綜合以上三種圖形，我們可以觀察出，$\beta$分配中，當參數$\beta$愈大，且							離$\alpha$差距愈大，函數形狀愈為右偏，高峰愈往原點集中，如圖									\ref{beta3}，反之，當$\alpha$愈大，且離$\beta$差距愈大時，函數愈為左							偏，此時高峰愈遠離原點，如圖\ref{beta1}，而當此二參數相等時，函數								則是向中間集中，呈現對稱狀，如圖\ref{beta2}，而我們同時將三種圖彙整後，							可得圖\ref{beta_final}：
+						\begin{figure}[H]	
+		 		 				\centering	 			 	 
+   				 				\includegraphics[width=1\textwidth]{\imgdir 												beta_final.jpg} 
+   			 					\caption{$\beta$ 分配}   		
+   			 					\label{beta_final}   			 		 
+						\end{figure}										
+					\end{enumerate}
+					其中，程式語法如下：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\
+       							 figure, hold on;\\
+      							 alpha=1:2:9; beta=1:2:9;xInterval = [0 1];\\	        
+      							 for i=1:length(alpha)\\
+         						\quad	for u=1:length(beta)\\
+            					\quad \quad		   f=@(x) betapdf(x,alpha(i),beta(u));       
+             					\\ \quad \quad		   fplot(f,xInterval,'LineWidth',																3,'Color','b');\\                               
+            					\quad	end\\
+       							 end\\
+       							 hold off; \\
+        						 title("$\backslash beta$ 分配");ylim([0 4]);\\
+       							 grid;set(gca,'fontsize',20);\\					 
+						\end{tabular}
+					}
+					\end{center}
+				}	
+				\newpage					
+				\item{\textbf{\MJHmarker{伽瑪分配:}}\\
+					伽瑪分配，又稱Gamma分配，也是統計上極為常見的分配之一，包含本文提到的卡方分						配，或是指數分配，都是由Gamma分配的參數改變而得，而Gamma分配有兩種參數改變						其分配形狀：					
+					\begin{enumerate}
+						\item $\alpha$，\textbf{\color{darkblue}形狀參數(Shpae 										parameter)}，影響P.D.F圖形之\textbf{\color{darkblue}陡峭}，程								度。
+						\item $\beta$，\textbf{\color{darkblue}尺度參數(Scale 										parameter)}影響P.D.F圖形之\textbf{\color{darkblue}散佈}，程								度。
+					\end{enumerate}
+					由於Gamma分配一樣有兩個參數改變，我們同樣分開討論三種可能發生的情況：
+					\begin{enumerate}
+						\item {$\alpha > \beta$\\
+							同樣我們假設$\alpha > \beta$，並觀察當$\beta$ 越來越接近$\alpha								$時，函數圖形會有何種表現，如圖\ref{gamma_case1}：
+							\begin{figure}[H]	
+		 		 				\centering	 			 	 
+   				 				\includegraphics[width=1\textwidth]{\imgdir 												gamma_case1.jpg} 
+   			 					\caption{Gamma 分配($\alpha > \beta$)}   		
+   			 					\label{gamma_case1}   			 		 
+							\end{figure}
+							由圖\ref{gamma_case1}可觀察出，當控制陡峭程度的形狀參數$\alpha								$愈大於尺度參數$\beta$時，圖形和理論相同，愈為陡峭，而當$\beta$愈								接近$\alpha$時，圖形則欲趨近平緩。
+						}
+						\item {$\alpha = \beta$\\
+							接著我們測試當$\alpha = \beta$時，並令兩者同時由$2$至$6$變化，觀								察函數圖形會有何種表現，如圖\ref{gamma_case2}：
+							\begin{figure}[H]	
+		 		 				\centering	 			 	 
+   				 				\includegraphics[width=1\textwidth]{\imgdir 												gamma_case2.jpg} 
+   			 					\caption{Gamma 分配($\alpha = \beta$)}   		
+   			 					\label{gamma_case2}   			 		 
+							\end{figure}
+							由圖\ref{gamma_case2}可觀察出，雖然兩參數相等，但當兩者同時增大								時，函數一樣會由陡峭趨近平緩，而右偏傾向也愈來愈不明顯。
+						}
+						\item {$\alpha < \beta$\\
+							最後我們測試當$\alpha < \beta$時，並讓$\beta$逐漸增大，遠離$									\alpha$，觀察函數圖形會有何種表現，如圖\ref{gamma_case3}：
+							\begin{figure}[H]	
+		 		 				\centering	 			 	 
+   				 				\includegraphics[width=1\textwidth]{\imgdir 												gamma_case3.jpg} 
+   			 					\caption{Gamma 分配($\alpha < \beta$)}   		
+   			 					\label{gamma_case3}   			 		 
+							\end{figure}
+							由圖\ref{gamma_case3}可觀察出，圖形變化上與前兩者差異不大，同樣利								用$\beta$參數改變，亦可變化圖形至平緩。
+						}
+					\end{enumerate}
+					由三種可能情況，我們同樣可以歸納出最終Gamma分配所有形狀的組合，大致呈現如圖						\ref{gamma_final}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir 												gamma_final.jpg} 
+   			 			\caption{Gamma 分配}   		
+   			 			\label{gamma_final}   			 		 
+					\end{figure}
+					有別於貝塔分配，Gamma分配無論參數大小變化如何，都不容易讓函數圖形由右偏至左						偏，而在此一樣整理出MATLAB語法提供參考：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+							figure,hold on; \\
+							v1 = [2:6];\\
+							v2 = [2:6];\\
+							for i=1:length(v1)\\
+ 							\quad   for j=1:length(v2)\\
+     						\quad \quad	  f = @(x) gampdf(x,v1(i),v2(j));\\
+      						\quad \quad	  fplot(f,[0,60],'LineWidth',3,'color','b');\\
+  							\quad  end\\
+							end\\
+							grid; \\ 
+							title("Gamma Dist.");  \\ 
+							set(gca,'fontsize',20); \\
+							hold off;\\
+						\end{tabular}
+					}
+					\end{center}					
+				}								
+			\end{enumerate}
+		\subsection{離散型函數}
+			同理，在離散型函數在本文中亦可稱作離散型隨機變數，而日常生活中一樣有許多離散型隨機變數				的例子，最簡單的擲銅板就是在統計上典型的例子之一，而為了展現MATLAB在離散型函數圖形上				的發揮，我們一樣利用些例子加以說明：
+			\begin{enumerate}
+				\item{\textbf{\MJHmarker{二項分配：}}\\	
+					在機率論和統計學中，\textbf{\color{darkblue}{二項分布}										（Binomial distribution）}是$n$個獨立的是/非試驗中成功的次數的離散機率分						布，	其中每次試驗的成功機率為$p$。這樣的單次成功/失敗試驗又稱為									\textbf{\color{darkblue}{伯努利試驗}}。實際上，當$n = 1$時，二項分布就						是伯努利分布，而在此我們利用簡單的直方圖來探討二項分配在圖形上呈現的樣貌：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir bin.jpg} 
+   			 			\caption{二項分配之直方圖}   		
+   			 			\label{bin}   			 		 
+					\end{figure}
+					上述提到，二項分配是觀察$n$次試驗中，在成功機率為$p$之情形下的試驗結果，因此						我們得知，二項分配的圖形藉由兩個參數$n$、$p$來改變其分配樣貌，而	由圖								\ref{bin}可看出，在我們令$n$為$20$且$p$為$0.6$的情形下，成功次數發生在							$12$次的機率最高，而其中，$12$，即是二項分配在$n=20,p=0.6$中理論上的平均值						(期望值)，藉由MATLAB實作圖形後，我們也能得確定實際與理論上並無差別。
+					\\
+					然而，在離散型分配上，我們有時候也關心其\textbf{\color{darkblue}{莖葉圖}						（Stem plot）}，如圖\ref{bin_stem}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir bin_stem.jpg} 
+   			 			\caption{二項分配之莖葉圖}   		
+   			 			\label{bin_stem}   			 		 
+					\end{figure}
+					其MATLAB語法透過\textbf{stem}展現，而二項分配則是利用\textbf{binopdf}的						函數來實踐，程式碼如下：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+							N=20;p=0.6;\\
+							x=0:N;\\
+							y=binopdf(x,N,p);\\
+							fig=stem(x,y);\\
+							fig.LineWidth=3;\\
+							grid;  \\
+							title("Bin. Dist.");   \\
+							set(gca,'fontsize',20); \\
+						\end{tabular}
+					}
+					\end{center}
+					\bigskip
+					最後，當我們觀察離散型分配函數時，次數相對成為重要的事情之一，而累積次數在特						定時候又是我們希望知道的事情，因此我們可以透過\textbf{stairs}呈現其階梯圖，						利用累積機率密度函數觀察離散分配會有何種表現，如圖\ref{bin_stairs}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir bin_stairs.jpg} 
+   			 			\caption{二項分配之階梯圖}   		
+   			 			\label{bin_stairs}   			 		 
+					\end{figure}
+					透過圖\ref{bin_stairs}可知，理論上會有將近8成的實驗，成功次數都在13次以							下，而成功次數超過15次的實驗，不超過1成，而呈現累積機率密度函數，與莖葉圖的語						法如下：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+							N=20;p=0.6;\\
+							x=0:N;\\
+							y=binocdf(x,N,p);\\
+							fig=stairs(x,y);\\
+							fig.LineWidth=3;\\
+							grid;  \\
+							title("Bin. Dist. CDF"); \\  
+							set(gca,'fontsize',20); \\
+						\end{tabular}
+					}
+					\end{center}
+					\bigskip
+					將原本的\textbf{binopdf}改成\textbf{binocdf}即可得到累積機率密度函數，而						透過莖葉圖與階梯圖，我們更容易觀察出在離散型函數分配上，簡單的敘述統計量與其						分配特性等等。							
+				}				
+				\item{\textbf{\MJHmarker{Poisson 分配：}}\\	
+					最後，我們在分配函數中，討論Poisson分配。常常在電視上聽到某某交通法規實施或						嚴格取締交通違規行動後，道路上每月發上車禍的次數明顯減少了。但是所謂的「明顯						減少」是怎麼判斷的呢，每個月都會偶爾發生一些意外事故，事件數量到底要有多大的						改變才算是明顯的變化？
+					\bigskip
+					\\					
+					或者家裡附近的警察每兩個小時固定會出來巡邏一次，那麼家裡門前在兩個小時之內都						沒有任何警察經過的機率是多少呢？這些問題都可以仰賴Poisson 分配來解決。假設某						區域單位時間之內平均事件發生次數為$\lambda$，那麼在這區域中事件發生的次數$X						$就符合Poisson 分配。還有許多日常生活中週遭的現象也符合Poisson 分配，例							如：每小時進入學校大門口的人數、隔壁麵店每小時的客人數量、每次紅綠燈之間的車						流量等等。\footnote{資料來源:http://www.agron.ntu.edu.tw/biostat/P							oisson.html}	
+					\bigskip
+					\\					
+					以下是Poisson分布的數學式：\\
+					Poisson分布只有一個參數，單位時間平均事件發生次數$\lambda$。
+					令$X$為一離散隨機變數，若$X$符合Poisson分布，其機率密度分布函數為(P.D.F)						為:
+					
+					$$f(x)=\frac{e^{-\lambda}\lambda^x}{x!}, \;\;  x=0,1,2,\cdots$$ 
+					
+					而其函數圖形如圖\ref{poisson_lam1}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir poisson_lam1.jpg} 
+   			 			\caption{Poisson 分配之莖葉圖}   		
+   			 			\label{poisson_lam1}   			 		 
+					\end{figure}
+					上述提到已知警察平均每兩個小時巡邏一次。那麼家裡門前在兩個小時內出現警察次數						($x$)的機率圖形如圖\ref{poisson_lam1}，可簡單觀察出，2小時內出現
+					0次警察的機率約為0.37左右，那在此題延伸，若是想知道出現1次以上，2次以上等等						呢?我們可以藉由累積機率密度函數輔佐解決此問題，如圖\ref{poisson_stairs}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir 												poisson_stairs.jpg} 
+   			 			\caption{Poisson 分配之階梯圖}   		
+   			 			\label{poisson_stairs}   			 		 
+					\end{figure}
+					由圖\ref{poisson_stairs}即可得知，警察出現超過1次的機率已經不到3成，而大						於2次的機率甚至不到1成，因此透過累積機率密度圖，亦可解決其他繁瑣問題。
+					\bigskip
+					\\					
+					其中語法如下：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+							x=[0:10];\\
+							y=poisscdf(x,1);\\
+							h=stairs(x,y);\\
+							h.LineWidth=5;\\
+							grid;  \\
+							title("Poisson，$\backslash lambda$ = 1");   \\
+							set(gca,'fontsize',20); \\
+						\end{tabular}
+					}
+					\end{center}
+											
+					最後，整理出幾個在參數$\lambda$不同的情形下，Poisson的各種形狀表現，如圖						\ref{poisson_final}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir 												poisson_final.jpg} 
+   			 			\caption{Poisson 分配之多種形態}   		
+   			 			\label{poisson_final}   			 		 
+					\end{figure}
+					圖\ref{poisson_final}中，$\lambda$愈大，圖形愈趨近平緩，由於$\lambda$為						平均數，亦為變異數，因此隨著$\lambda$愈大高峰點也愈大，圖形也愈矮胖，而其語						法如下：
+					
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+							x=[0:15];lam=[2:2:10];\\
+							figure, hold on;\\
+							for i=1:length(lam)\\
+ 							\quad  y=poisspdf(x,lam(i));\\
+  							\quad  h=plot(x,y);\\
+  							\quad  h.LineWidth=5;\\
+							end\\
+							grid;title("Poisson");  \\ 
+							set(gca,'fontsize',20); \\
+							legend(string("$\backslash lambda$ ="+lam));\\
+							hold off;\\
+						\end{tabular}
+					}
+					\end{center}					
+				}	
+			\end{enumerate}
+	\section{亂數產生與相關圖形}
+		亂數是一連串獨立數字的組成，在此章的亂數，卻也是有規律的一串數字，我們將討論到如何從特定分			配中抽一連串亂數，並做圖形分析，敘述統計量之討論，母體推論與驗證，樣本數大小的差異等等，而			利用MATLAB解決諸如此類的問題，而以下將舉幾個例子做討論：		
+		\begin{enumerate}
+		\item{\textbf{\MJHmarker{常態分配之亂數產生：}}\\		
+			上節我們已經了解常態分配的圖形，以及其參數變化後，函數形狀會如何改變，而這節我們一樣透				過最常見的常態分配，隨機產生亂數，並進一步探討，而在產生亂數之前，我們釐清一個問題：				「亂數要產生多少個才夠？」，而這個問題也直接牽扯到\textbf{\color{darkblue}{樣本					數}}大小，我們從常態分配中產生亂數，要產生多少個亂數，這些樣本才會足夠像母體呢？以下我				們也利用程式解決此問題：
+			\begin{figure}[H]
+    		 	\centering
+      			 \subfloat[N=30]{
+       			 \includegraphics[scale=0.15]{\imgdir normal30.jpg}}
+        		 \subfloat[N=100]{
+       			 \includegraphics[scale=0.15]{\imgdir normal100.jpg}}
+       			 \\
+       			 \subfloat[N=300]{
+       			 \includegraphics[scale=0.15]{\imgdir normal300.jpg}}
+       			 \subfloat[N=1000]{
+       			 \includegraphics[scale=0.15]{\imgdir normal1000.jpg}}
+       			 \caption{樣本數大小之差異}   
+   				 \label{normal_samplesize}
+			\end{figure}			
+			其中僅需改變N的大小，就能產生不同樣貌的常態分配樣本圖形，程式碼如下：			
+			\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+					n=30;x=normrnd(0,1,1,n);\\					
+					h=histogram(x);\\
+					h.NumBins=30;h.FaceColor='red';\\					
+					xlim([-3,3]);grid;set(gca,'fontsize',20);\\					
+					title(string("Normal，n="+n));\\   					
+				\end{tabular}
+			}
+			\end{center}		
+			由圖\ref{normal_samplesize}可看出，當樣本數愈大時，圖形才會愈明顯像常態分佈，而若是				以qqplot圖來觀察的話，可以更明顯看出其中差異，如圖\ref{normal_qqplot}：
+			\begin{figure}[H]
+    		 	\centering
+      			 \subfloat[N=30]{
+       			 \includegraphics[scale=0.13]{\imgdir normal30.jpg}}
+        		 \subfloat[qqplot，N=30]{
+       			 \includegraphics[scale=0.13]{\imgdir normal_qq30.jpg}}
+       			 \\
+       			 \subfloat[N=300]{
+       			 \includegraphics[scale=0.13]{\imgdir normal300.jpg}}
+       			 \subfloat[qqplot，N=300]{
+       			 \includegraphics[scale=0.13]{\imgdir normal_qq300.jpg}}
+       			 \\
+       			 \subfloat[N=1000]{
+       			 \includegraphics[scale=0.13]{\imgdir normal1000.jpg}}   
+       			 \subfloat[qqplot，N=1000]{
+       			 \includegraphics[scale=0.13]{\imgdir normal_qq1000.jpg}}
+       			 \caption{樣本數大小與qqplot比較}
+   				 \label{normal_qqplot}
+			\end{figure}
+			圖\ref{normal_qqplot}我們已經能觀察出，樣本數超過300時已經夠像常態分配的形狀，當樣				本數1000時，qqplot幾乎吻合常態分配該有的樣貌。
+			
+			最後我們能夠透過boxplot來觀察我們產生亂數後的一些敘述統計量，亦能看出分配大至偏態形				狀等等，如圖\ref{normal_box}；
+			\begin{figure}[H]	
+		 		 \centering	 			 	 
+   				 \includegraphics[width=1\textwidth]{\imgdir normal_box.jpg} 
+   			 	 \caption{常態分配}   		
+   			 	 \label{normal_box}   			 		 
+			\end{figure}
+			由此也能看出，圖形大致呈現對稱狀，中位數落在$0$的位置左右，而也有幾個outlier在圖中，				其程式碼如下：
+			\bigskip
+			\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+					n=1000;\\
+					x=normrnd(0,1,1,n);\\
+					boxplot(x);\\
+					grid;\\
+					title(string("Normal，n="+n));  \\ 
+					set(gca,'fontsize',20);\\
+				\end{tabular}
+			}
+			\end{center}			
+		}
+		
+		\item{\textbf{\MJHmarker{卡方分配之亂數產生：}}\\
+			由上例可知，樣本數愈大，所產生的樣本分配愈趨近於母體，而卡方分配一樣如此，然而，在程式				繪圖中，仍有些參數設定須注意，例如\textbf{NumBins}，若切割太少，則圖形顯示上不足以具				代表性，因此切割數也不能過低：如圖\ref{chi_hist_bin}：
+			\begin{figure}[H]	
+		 		 \centering	 			 	 
+   				 \subfloat[bins=5]{
+       			 \includegraphics[scale=0.15]{\imgdir chi_hist_b5.jpg}}
+       			 \subfloat[bins=30]{
+       			 \includegraphics[scale=0.15]{\imgdir chi_hist_b30.jpg}}
+   			 	 \caption{卡方分配，bins大小差異}   		
+   			 	 \label{chi_hist_bin}   			 		 
+			\end{figure}
+			而當我們最後決定好bins以及樣本數後，即可繪製卡方圖形，並且以理論的卡方分配線來配適此樣				本分配之直方圖，看兩者之間是否吻合，如圖\ref{chi_plot}：
+			\begin{figure}[H]	
+		 		 \centering	 			 	 
+   				 \includegraphics[width=1\textwidth]{\imgdir chi_plot.jpg} 
+   			 	 \caption{卡方分配與理論值之配適}   		
+   			 	 \label{chi_plot}   			 		 
+			\end{figure}			
+			圖\ref{chi_plot}看出，理論的卡方分配(紅線)與我們隨機抽樣之直方圖，大致吻合，如此可以				簡單驗證此樣本確實是來自卡方分配。
+			而透過理論線段重疊樣本圖形之程式碼如下：
+			\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+					n=1000;\\
+					x=chi2rnd(3,1,n);\\
+					h=histogram(x,'Normalization','pdf');\\
+					h.NumBins=30;\\					
+					title("ChiSquare");   \\
+					set(gca,'fontsize',20);\\
+					hold on;\\
+					f = @(x1) chi2pdf(x1,3);\\
+					fplot(f,'LineWidth',3);\\
+					hold off;\\
+					xlim([0 15]);grid;\\
+				\end{tabular}
+			}
+			\end{center}
+			或是透過ECDF圖形，也能看出在累積機率密度函數中，理論值與我們抽樣值是否吻合，如圖					\ref{chi_ecdf}：
+			\begin{figure}[H]	
+		 		 \centering	 			 	 
+   				 \includegraphics[width=1\textwidth]{\imgdir chi_ecdf.jpg} 
+   			 	 \caption{卡方分配\_ ECDF圖}   		
+   			 	 \label{chi_ecdf}   			 		 
+			\end{figure}
+			
+			程式語法如下：
+			\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+					figure ,hold on;\\
+					n=1000;\\
+					x=chi2rnd(3,1,n);\\
+					h=cdfplot(x)'\\
+					h.LineWidth=3;\\					
+					title("ChiSquare");   \\
+					set(gca,'fontsize',20);\\
+					f = @(x1) chi2cdf(x1,3);\\
+					fplot(f,'LineStyle',"--",'Color','r','LineWidth',4);\\
+					hold off;grid;\\
+				\end{tabular}
+			}
+			\end{center}
+			圖\ref{chi_ecdf}中，紅線為理論值，藍線為樣本，可見大致吻合，也可確定此樣本是來自卡方				分配。			
+			最後，我們已經大致確定此樣本真的是來自卡方分配後，以qqplot來觀察圖形會形成怎樣形狀，				驗證其不會符合常態分配之形狀，如圖\ref{chi_qq}：
+			\begin{figure}[H]	
+		 		 \centering	 			 	 
+   				 \includegraphics[width=1\textwidth]{\imgdir chi_qq.jpg} 
+   			 	 \caption{卡方分配\_ qqplot}   		
+   			 	 \label{chi_qq}   			 		 
+			\end{figure}
+			圖\ref{chi_qq}明顯看出，樣本資料大致不落在$45$度線上，可見此分配確實不是常態分配。
+		}
+		\end{enumerate}	
+	\section{抽樣分配}
+		在上章節中提到透過某特定母體抽取亂數，做出多方面探討，然而，在日常生活中，有些情況卻無法直			接利用母體取得後之樣本，直接做進一步分析，中間反而需經過不同種類的函數變化，而衍生出新的樣			本，而此時我們更關心這樣新的樣本，會形成怎樣的分配，而此分配又可稱作抽樣分配，在此我們除				了討論抽樣分配外，也透過程式演練，驗證過去所學的理論，與如今實際操演的結果，是否雷同，因此			以下也舉幾個例子研究此問題：
+		\begin{enumerate}
+			\item{\textbf{\MJHmarker{中央極限定理}}\\
+				中央極限定理是機率論中的一組定理。中央極限定理說明，在適當的條件下，大量相互獨立隨					機變數的平均數經適當標準化後依分布收斂於常態分布。這組定理是數理統計和誤差分析的理					論基礎，指出了大量隨機變數之抽樣分配近似服從常態分布的條件。				
+				\\
+				\bigskip
+				為了實踐中央極限定理，我們假設從二項分配中抽取$n$組樣本，計算其平均數，並且重複實					驗1000次($N=1000$)，觀察在不同數量之樣本底下，抽樣分配最後收斂的結果，如圖						\ref{clt_samplesize}：
+				\begin{figure}[H]	
+		 			 \centering	 			 	 
+   					 \subfloat[n=5]{
+       				 \includegraphics[scale=0.15]{\imgdir clt_n5.jpg}}
+       				 \subfloat[n=10]{
+       				 \includegraphics[scale=0.15]{\imgdir clt_n10.jpg}}
+       				 \\
+       				 \subfloat[n=30]{
+       				 \includegraphics[scale=0.15]{\imgdir clt_n30.jpg}}
+       				 \subfloat[n=100]{
+       				 \includegraphics[scale=0.15]{\imgdir clt_n100.jpg}}
+   			 		 \caption{CLT 樣本大小差異}   		
+   			 		 \label{clt_samplesize}   			 		 
+				\end{figure}
+				由圖\ref{clt_samplesize}可看出，在$n=5$時圖形還有左偏傾向，但到了$n=30$圖形大					致已形成對稱的鐘形分布，而仔細觀察$x$座標，可以發現當$n$愈大，樣本愈集中，到了						$n=100$時，樣本大致已分布在$11.5$與$12.5$之間，可見樣本數愈大，變異程度愈小。
+				\\				
+				最後我們知道透過理論的常態分配曲線，來看是否此隨機樣本在經過平均的函數調整下，形成					的新的分配，真的服從常態分配：
+				\begin{figure}[H]	
+		 		 	\centering	 			 	 
+   				 	\includegraphics[width=1\textwidth]{\imgdir clt_pf.jpg} 
+   			 	 	\caption{抽樣分配趨近常態分配}   		
+   			 		\label{clt_pf}   			 		 
+				\end{figure}
+				透過圖\ref{clt_pf}，看出理論曲線，和我們的抽樣分配近乎吻合，可以推測此抽樣分配來					自常態分配，而也和過去所了解的中央極限定理相符，以下是透過MATLAB實作之程式碼：	
+				\begin{center}\colorbox{slight}{
+					\begin{tabular}{p{0.9\textwidth}}
+						\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+						figure,hold on;\\
+						n=100;N=1000;\\						
+						x=binornd(20,0.6,n,N);\\						
+						histogram(mean(x),'NumBins',30,'Normalization','pdf');\\
+						set(gca,'fontsize',20);\\
+						f = @(x1) normpdf(x1,12,0.2);\\
+						h=fplot(f);\\
+						h.LineWidth=3;\\
+						title("CLT n="+string(n));xlim([11 13]);grid;hold off;\\
+					\end{tabular}
+					}
+				\end{center}				
+				\bigskip
+			}
+			\newpage
+			\item{\textbf{\MJHmarker{卡方分配的由來：}}\\
+				卡方分配，是由標準常態分配經過函數轉換而來，這在數理統計中時常被提及，而這項真理如					何從理論實作，以下將以MATLAB用圖形實踐理論。同樣假設我們隨機從標準常態分配中抽樣					$n$筆資料，並對其進行平方轉換，得出新的資料集，在觀測新的資料集的分配是否服從卡方					分配：
+				\begin{figure}[H]	
+		 		 	\centering	 			 	 
+   				 	\includegraphics[width=1\textwidth]{\imgdir chi2_1.jpg} 
+   			 	 	\caption{$Z^2$之轉換 直方圖}   		
+   			 		\label{chi2_1}   			 		 
+				\end{figure}
+				圖\ref{chi2_1}形狀類似理論上的卡方分配，且自由度為1，而我們這次透過ECDF圖來驗證					我們得出的樣本，是否真的和理論上一樣服從卡方1：
+				\begin{figure}[H]	
+		 		 	\centering	 			 	 
+   				 	\includegraphics[width=1\textwidth]{\imgdir chi2_fromZ.jpg} 
+   			 	 	\caption{$Z^2$之轉換 ECDF圖}   		
+   			 		\label{chi2_fromZ}   			 		 
+				\end{figure}
+				圖\ref{chi2_fromZ}中，理論值為紅線，和樣本大致吻合，因此推測此抽樣分配最後形成					卡方分配，且自由度為1。
+				而其中，程式碼如下：
+				\begin{center}\colorbox{slight}{
+					\begin{tabular}{p{0.9\textwidth}}
+						\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+						figure,hold on;\\
+						n=1000;\\
+						x=normrnd(0,1,1,n);\\
+						newX=x.\^2;\\
+						grid;xlim([0 10]);\\
+						set(gca,'fontsize',20);\\
+						h=cdfplot(newX);\\
+						h.LineWidth=3;\\
+						f = @(x1) chi2cdf(x1,1);\\
+						fplot(f,'LineWidth',3,'LineStyle','- -');\\
+						hold off;\\
+					\end{tabular}
+					}
+				\end{center}	
+			}
+			\newpage
+			\item{\textbf{\MJHmarker{分配可加性}}\\
+				最後，我們討論到分配的可加性，分配可加性亦即兩特定分配相加後，依然服從該分配，例如					先前提及的卡方1加上卡方1，最後依然會形成卡方分配，且自由度為2，而如此數學理論，我					們依然能利用MATLAB實作其抽樣分配的樣貌：
+				\begin{figure}[H]	
+		 		 	\centering	 			 	 
+   				 	\includegraphics[width=1\textwidth]{\imgdir chi2_2.jpg} 
+   			 	 	\caption{卡方分配可加性}   		
+   			 		\label{chi2_2}   			 		 
+				\end{figure}
+				我們透過隨機產生亂數，由卡方1中產生2組1000比亂數，接著對它進行相加的動作，結果顯					現如圖\ref{chi2_2}，可以看出圖\ref{chi2_2}分配形狀接近卡方分配，但我們仍須一條					理論線來輔佐我們判斷，如圖\ref{chi2_2_plot}；
+				\begin{figure}[H]	
+		 		 	\centering	 			 	 
+   				 	\includegraphics[width=1\textwidth]{\imgdir chi2_2_plot.jpg} 
+   			 	 	\caption{卡方分配可加性與理論線之配適}   		
+   			 		\label{chi2_2_plot}   			 		 
+				\end{figure}
+				同樣透過理論值來輔佐，我們看出實際與理論極為接近，因此驗證卡方分配具有可加性，而					MATLAB實作語法如下：
+				\begin{center}\colorbox{slight}{
+					\begin{tabular}{p{0.9\textwidth}}
+						\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+						figure,hold on;\\
+						n=1000;\\
+						x1=chi2rnd(1,1,n);\\
+						x2=chi2rnd(1,1,n);\\
+						newX=x1+x2;\\
+						histogram(newX,'Normalization','pdf');	\\
+						grid;xlim=([0:10]);title("ChiSquare2");   \\
+						set(gca,'fontsize',20);\\
+						f = @(x3) chi2pdf(x3,2);\\
+						fplot(f,'LineWidth',3,'LineStyle','--');	\\
+						hold off;\\
+						
+					\end{tabular}
+					}
+				\end{center}
+			}
+		\end{enumerate}
+	\section{結論}
+		透過MATLAB，我們了解統計分配上的各種圖形呈現，不需要手動輸入繁瑣複雜的機率密度函數，僅須記			得短短幾行程式碼的語法，接著以各種圖形包括盒形圖，莖葉圖，直方圖等等呈現函數最原始的樣貌，			並且MATLAB中亦可以從某種特定分配中，產生一連串自訂樣本數的亂數，除了對於現今樣本數少有所益			處外，更能增加學習方式，而最後透過ECDF圖或是其他理論圖驗證此樣本來自的母體分配，對應到最初			數理統計學的多種理論，搭配實用的程式語言，交錯學習中更能以圖形記憶，增加基礎觀念。	
+%\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+

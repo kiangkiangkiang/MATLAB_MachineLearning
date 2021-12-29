@@ -1,0 +1,387 @@
+%\input{../Jiang_Preamble}
+%\title{\MJHmarker 監督式學習 \\ \Large{\textbf{判別式與KNN}}}
+%\author{{\MJH 江柏學}}
+%\date{\today}  
+%\begin{document}
+%	\maketitle
+%	\fontsize{12}{22pt}\selectfont
+\chapter{\MJH 監督式學習之判別式與KNN}
+	在監督式學習中，除了能用傳統統計的迴歸方式作為分群的依據之外，\textbf{判別式(Discriminant)}		與\textbf{K-Nearest\ Neighbors(KNN)}都是此學習模式中良好的分類器，而相較於迴歸強硬的規範分		類線的型態，利用判別式的方式更著重在機率的比較，同樣建構在統計的基礎上，此方式是對資料有著分配的		假設，比較新的資料在哪一種類別的機率較高，而讓我們判斷類別機率高低的依據，即是本文的主題之一，判		別式。而在最後，也將討論在監督式學習中常見的演算法之一，KNN，有別於統計的基礎，KNN在不需經由任		何假設的情況下，透過機器學習的概念做基本預測與分類，以下也將逐一探討這幾種分類方式。
+	\section{Discriminant}
+		在日常生活中，假設我們有一群資料包含自變數($x_1,x_2$)以及應變數($y,\forall y \in \{ 			0,1\}$)，其中$y$屬於類別變數，而我們有興趣知道新的一筆資料是屬於哪種類別，亦即有興趣想知			道新資料中，$y$是$0$還是$1$，而基於機率的角度思考，我們更想知道新資料中，$y=0$的機率高，			還是$y=1$的機率高，因此由直觀角度思考，便是求$P(y=0 \mid X=newX)$以及$P(y=1 \mid 				X=newX)$ 其中$newX$為新資料，而我們透過統計中的\textbf{貝式定理}改寫此機率，如式				(\ref{eq:bayes})：
+ 		\bigskip
+		\begin{equation}\label{eq:bayes} 						
+ 			P(y=0 \mid X=newX) = \frac{P(X=newX \mid y=0)P(y=0)}{P(X=newX)}
+ 		\end{equation}
+ 		\\
+ 		我們將原本需進行比較的機率利用貝式定理改成式(\ref{eq:bayes})的型態後，分母因為兩者都相			同，比較時並不需考量，因此又可改形成式(\ref{eq:bayes_up})：
+ 		\bigskip
+ 		\begin{equation}\label{eq:bayes_up} 						
+ 			P(X=newX \mid y=0)P(y=0)
+ 		\end{equation}
+ 		\\
+		其中式(\ref{eq:bayes_up})的乘積，前者又可稱為概似函數值($P(X=newX \mid y=0)$)，倘若			我們做出一項大膽的假設，即假設資料服從常態分佈，其概似函數值就能透過概似函數求出，而此概似			函數在此例便是二維常態分配，如式(\ref{eq:muNorm})，因此可以透過估計方式求得，而後者				$P(y=0)$亦可從樣本資料分布估計，因此我們便可從出機率值加以比較大小。
+ 		\bigskip
+		\begin{equation}\label{eq:muNorm} 						
+ 			f_k(x) = \frac{1}{(2 \pi )^{\frac{p}{2} } \begin{vmatrix}
+ 			\sum_k
+ 			\end{vmatrix}^{\frac{1}{2}}}
+ 			e^{-\frac{1}{2} (X-\mu_0)^{T} \sum_k^{-1} (X-\mu_0) }
+ 		\end{equation}
+ 		\\
+		其中若假設每群間的共變異數矩陣相同，式(\ref{eq:muNorm})中的$\sum_k$便可改寫成$\sum$，			並且透過對數轉換及取極值化簡後，即可得出最終判別式，如式(\ref{eq:disc})：
+		\bigskip
+		\begin{equation}\label{eq:disc} 						
+ 			\delta_k(x)= X^{T} {\sum}^{-1} \mu_0 - \frac{1}{2}\mu_0^{T} {\sum} ^{-1} 				\mu_0 +\log{P(y=0)}
+ 		\end{equation}
+ 		\\
+ 		最後，我們令$P(y=0 \mid X=newX)=P(y=1 \mid X=newX)$即可得到分類線，而在此時，因為我們			假設了每群共變異數相同，因此線段呈現直線，稱作\textbf{LDA(Linear Discriminant 					Analysis)}，而倘若部基於此假設情形下建模，線段將會呈現曲線狀，稱作\textbf{QDA(Quadrati  		Discriminant Analysis)}，而此二分類器皆可以利用MATLAB實作，以下也將一一討論。
+ 		\subsection{LDA(Linear Discriminant Analysis)}
+			在上述我們已經介紹完LDA的數學內涵以及統計性質，還有其基本的假設，而以下將透過MATLAB展				示其在分類上的成效，以及圖形上的呈現，而我們以既有的資料集為例，包含兩變項($x_1,x_2$)				以及類別變數($y, \forall y \in \{ 0,1\}$)，資料集名稱為"Demo"，作為實作中的模擬資				料集，而實驗步驟如下：			
+			\begin{enumerate}[Step 1：]
+				\item {\textbf{取得並了解資料集}\\
+					在取得資料集時，我們往往會先簡單觀察資料是否來源正常，會不會有過多離群值，資						料大致分佈狀況，以及有無遺失值等等，先檢視資料，前(預)處理資料後，使得進行之						後分析，而在此也不例外，由於我們已知資料為模擬資料，並無缺失值存在，因此接著						透過盒形圖進行簡單觀察資料分佈以及離群值存在多寡，如圖\ref{fig:ldaBox}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir ldaBox.jpg} 
+   			 			\caption{資料大致分布}   		
+   			 			\label{fig:ldaBox}   			 		 
+					\end{figure}
+					由圖\ref{fig:ldaBox}可看出並無離群值存在，並且資料中兩變項分佈相去不遠，僅						有些許變異上不同，中位數也大致坐落同樣位置，而資料並無太大問題，因此我們略過						資料前(預)處理，直接進行統計分析。
+				}				
+				\item {\textbf{求矩陣$\mu$ 與矩陣$\sum$ }\\
+					接著，我們需要透過MATLAB程式語法幫助我們求出矩陣$\mu$ 與矩陣$\sum$，而$							\mu$矩陣，便是要分別求出當$y=0$之下，$x_1$和$x_2$的平均，以及$y=1$之下，						兩者的平均，語法如下：					
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\
+							D=load('Demo.txt');\\
+							X=D(:,1:2); y=D(:,3);\\
+							gscatter(X(:,1),X(:,2),y,'br','<>');\\
+							x1=X(y==0,:);x2=X(y==1,:);\\							
+							mu1 = mean(x1)';mu2 = mean(x2)'\\
+							text(mu1(1),mu1(2),'O','FontSize',20);\\
+							text(mu2(1),mu2(2),'O','FontSize',20);\\
+						\end{tabular}
+					}
+					\end{center}
+					接著求出平均後，讓其平均值標記於資料之散佈圖上，觀察是否平均合理，如圖							\ref{fig:ldaMu}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir ldaMu.jpg} 
+   			 			\caption{平均值坐落位置}   		
+   			 			\label{fig:ldaMu}   			 		 
+					\end{figure}
+					圖\ref{fig:ldaMu}中，平均值為點"O"，大致能夠坐落在兩群之中心位置，因此判斷						平均值可能錯誤機會不大，而接著開始計算$\sum$。
+					\\	
+					\\											
+					在前文提及，LDA是基於假設每群變異數矩陣$\sum$皆相等的情形下，所建構之模型，						而此$\sum$在兩群數量相等時，$\sum = \frac{(\sum_A + \sum_B)}{2}$，其中						$A,B$代表兩群分別為群$A$以及群$B$，在此例中，僅需將$y=0$和$y=1$的共變異數						矩陣求出，相加後除$2$即可得到共同$\sum$，而在程式碼上，僅需加入"sigma = 						(cov(x1)+cov(x2))/2"，即可求出。					
+				}
+				\\
+				\item {\textbf{建立判別式}\\
+					最後，在資料都準備齊全後，即可開始建立式(\ref{eq:disc})，建立判別式後即可得						知當取得新資料時，他的類別歸屬，在此我們舉例新資料為$[0,3]^{T}$，而其在座標						軸上如圖\ref{fig:ldaNewX}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir ldaNewX.jpg} 
+   			 			\caption{新資料(0,3)位置}   		
+   			 			\label{fig:ldaNewX}   			 		 
+					\end{figure}
+					圖\ref{fig:ldaNewX}，可看出新資料大約落在群$1$之中，而由判別式計算後，我們						得出，落在群$0$的可能性有$-3.2742$單位，遠小於落在群$1$的可能$3.4207$單						位，因此由判別式我們也可得知，此新資料較可能屬於群$1$。其中語法如下：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\
+							D=load('Demo.txt');X=D(:,1:2); y=D(:,3);\\	
+							gscatter(X(:,1),X(:,2),y,'br','<>');\\
+							x1=X(y==0,:);x2=X(y==1,:);\\
+							mu1 = mean(x1)';mu2 = mean(x2)'\\
+							text(0,3,'O','FontSize',20);\\
+							sigma = (cov(x1)+cov(x2))/2;x=[0,3]'\\	
+							N1=sum(y==0);N2=sum(y==1);\\							
+							pi1 = N1/(N1+N2);pi2 = N2/(N1+N2);\\						
+							delta0 = 																					x'*inv(sigma)*mu1-0.5*mu1'*inv(sigma)*mu1+log(pi1)\\
+							delta1 = 																					x'*inv(sigma)*mu2-0.5*mu2'*inv(sigma)*mu2+log(pi2)\\
+						\end{tabular}
+					}
+					\end{center}
+					\bigskip										
+					最後，我們也可利用MATLAB，將此判別之分類線繪製於圖中，如圖										\ref{fig:ldaMdl}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir ldaMdl.jpg} 
+   			 			\caption{LDA 分類線}   		
+   			 			\label{fig:ldaMdl}   			 		 
+					\end{figure}
+					圖\ref{fig:ldaMdl}中LDA\ Model即是令$P(y=0 \mid X=newX)=P(y=1 							\mid X=newX)$求出之分類線，而透過此分類線，也可以明顯判斷出新資料$(0,3)$屬						於群$1$。
+				}
+			\end{enumerate} 	
+			\bigskip	
+ 		\subsection{QDA(Quadratic Discriminant Analysis)}
+ 			然而，在日常生活中有許多資料都不滿足LDA的變異一致性假設，因此對於那些不滿足假設的資					料，LDA模型並不能做良好的分類，而在面對這樣資料的處理上，我們便拿掉變異數一致性的假					設，形成新的分類模型，QDA，而在此模型上，背後理論基礎只建立在資料服從常態分配上，因此				較LDA來說，更能處理較多型態的資料，而本文也將透過上述"Demo"資料集，利用MATLAB做實					作，展示QDA在實驗上的成效，以及程式碼操作的處理，還有最後圖形上的展示。
+ 			\\
+ 			\\
+ 			在實作上，我們已經知道資料大致的分佈模樣，因此直接透過MATLAB語法進行QDA建模，而					MATLAB中，也有對應的語法，不需要向先前透過理論基礎，土法煉鋼的建立模型，而是透						過"fitcdiscr"來完成模型建立，其程式語法如下：
+ 			\bigskip
+ 			\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\
+							D=load('Demo.txt');\\
+							n=size(D,1);g=cell(n,1);X=D(:,1:2);\\
+							g(D(:,3)==0)={'Group A'};\\
+							g(D(:,3)==1)={'Group B'};\\
+							gscatter(D(:,1),D(:,2),g,'br','ox');\\					
+							QDA = fitcdiscr(X,g,'DiscrimType','quadratic');\\
+							k=QDA.Coeffs(1,2).Const;\\
+							Q=QDA.Coeffs(1,2).Quadratic\\
+							L=QDA.Coeffs(1,2).Linear\\
+							f = @(x1,x2) k+L(1)*x1+L(2)																	*x2+Q(1,1)*x1\^2+Q(1,2)*x1*x2+Q(2,2)*x2\^2
+							\\
+							hold on;fimplicit(f,'LineWidth',3)\\						
+							hold off;\\
+				\end{tabular}
+			}
+			\end{center}				
+			我們取得資料後，透過'cell'將原本屬於$\{0,1\}$的資料改成'Group A'和'Group B'，接著				透過'fitcdiscr'建立模型，其中參數'DiscrimType'設定為'quadratic'也就是代表著目前建				立的模型為QDA模型，最後透過語法，將QDA物件內的各個屬性取出，包									含'Const'、'Quadratic'等，以建立QDA分類線，而最後展示圖形如圖\ref{fig:qdaMdl}：
+			\begin{figure}[H]	
+		 		\centering	 			 	 
+   				\includegraphics[width=1\textwidth]{\imgdir qdaMdl.jpg} 
+   			 	\caption{QDA Model}   		
+   			 	\label{fig:qdaMdl}   			 		 
+			\end{figure}
+ 			最後，我們也同樣以新資料$[0,3]$作為測試，利用語法'predict'來預測新資料坐落類別，而實				驗結果顯示，新資料屬於群"Group B"也就是和LDA結果相同為群$1$，而圖形顯示也明顯可看出				資料位於"Group B"之位置，如圖\ref{fig:qdaMdlPre}：
+ 			\begin{figure}[H]	
+		 		\centering	 			 	 
+   				\includegraphics[width=1\textwidth]{\imgdir qdaMdlPre.jpg} 
+   			 	\caption{QDA Model Predict}   		
+   			 	\label{fig:qdaMdlPre}   			 		 
+			\end{figure}
+			圖\ref{fig:qdaMdlPre}\ 中，點"O"即為新資料位置。
+			\\
+			\\
+			而在此二模型中，以"Demo"資料集為例，透過MATLAB計算可知，兩者在訓練資料上都有超過9成				的正確率，其中LDA的方式更是展現了94\%的高正確率，高於QDA\ 0.5\%的水準，因此可以猜測				此資料集變異數可能較一致，因此以LDA有較簡單，且高效率的結果。
+	\section{K-Nearest\ Neighbors(KNN)}
+		KNN在機器學習中佔有一席重要之地，因為其能夠以直觀的演算概念，呈現高水準的正確程度，其中不需			要有任何假設的基礎，即能完成預測，而此概念即是在某個新資料周圍，找出K個離此新資料最近的此K			已知資料，並計算此K個資料所屬群組，最後將新資料點判定給此K個資料所屬較多的群組，如圖				\ref{fig:knnNewX}\ 所示；
+		\begin{figure}[H]	
+		 	\centering	 			 	 
+   			\includegraphics[width=1\textwidth]{\imgdir knnNewX.jpg} 
+   			\caption{KNN Predict}   		
+   		 	\label{fig:knnNewX}   			 		 
+		\end{figure}
+		我們將K設定成10，亦即計算最近的10個點的類別，而此例最近10個點中，最多的類別是群1，因此判定			新資料較有可能是群1。
+		\\
+		\\
+		然而，K設定成10並無任何依據證明是最佳解，也可設定成其他數值，而K要設定多少變成了KNN演算法			的問題之一，而在此資料集中，我們反覆測試k為5、10、15、20等等，發現在K為5時有著最好的訓練			正確率為95\%，而其他正確率分別為93\%、94\%、93.5\%，因此我們以$K=5$繪製KNN之分類線，如			圖\ref{fig:knnMdl}；
+		\begin{figure}[H]	
+		 	\centering	 			 	 
+   			\includegraphics[width=1\textwidth]{\imgdir knnMdl.jpg} 
+   			\caption{KNN 分類線}   		
+   		 	\label{fig:knnMdl}   			 		 
+		\end{figure}
+		透過輪廓線，將$0,1$區隔開來，其中所使用到的關鍵函數為"contour"，是能繪出平面上座標值的輪			廓，而此例刻意將平面每個以0.05為間隔的點做預測，因此將近預測整個平面座標，再將預測結果和每			個點的位置當作參數傳給"contour"，如此一來，此函數就知道平面座標每個點的高低(0,1)，接著透			過此高低繪製輪廓線，類似等高線，而若是將此預測完結果也以MATLAB繪製出來，圖形將如圖					\ref{fig:knnMeshgrid}\ 所示：
+		\begin{figure}[H]	
+		 	\centering	 			 	 
+   			\includegraphics[width=1\textwidth]{\imgdir knnMeshgrid.jpg} 
+   			\caption{KNN Meshgrid}   		
+   		 	\label{fig:knnMeshgrid}   			 		 
+		\end{figure}
+		其中，程式碼如下：		
+ 			\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\
+							figure,hold on;\\
+							D=load('Demo.txt');\\
+							knn5 = fitcknn(D(:,1:2),D(:,3),'NumNeighbors',5);\\
+							gscatter(D(:,1),D(:,2),D(:,3),'br','ox',10)\\
+							
+							[matrix1,matrix2] = meshgrid(-2:0.05:10,-1:0.05:5);\\
+							vec1 = matrix1(:);vec2 = matrix2(:);\\
+							m = predict(knn5,[vec1,vec2]);[mm,nn]=size(matrix1);\\
+							z=reshape(m,mm,nn);gscatter(vec1,vec2,m,'br','..');\\
+							
+							contour(matrix1,matrix2,z,[0.5 0.5],'LineWidth',4)\\
+							title('KNN Model');grid;legend('0','1','KNN Model');\\
+							set(gca,'fontsize',20);hold off;\\
+							
+				\end{tabular}
+			}
+			\end{center}
+		而此亦可以用立體圖來顯示此預測結果，僅須加上"mesh(matrix1,matrix2,z)"即可完成立體				圖形，如圖\ref{fig:knnMesh}：
+		\begin{figure}[H]	
+		 	\centering	 			 	 
+   			\includegraphics[width=1\textwidth]{\imgdir knnMesh.jpg} 
+   			\caption{KNN 立體圖}   		
+   		 	\label{fig:knnMesh}   			 		 
+		\end{figure}
+		圖\ref{fig:knnMesh}\ 中，透過立體圖形，可以更明顯看出來兩群間的差異，利用z座標，將群1撐			高，而群0仍維持平面。
+	\section{模型比較}
+		綜合以上三種不同的模型，我們對於分類器已有相當程度的了解，但哪種分類器能夠有較好的成效，以			下我們將做測試，比較LDA，QDA，KNN(5)，KNN(15)，其中KNN的K數量選擇，暫時先依據上述例子的			正確率較高兩者決定，因此先由5與15建模。
+		\\
+		再者，在資料選擇中，我們模擬出以下兩種資料，如圖\ref{fig:cmpData12}：
+		\begin{figure}[H]
+    		\centering      			 
+       		\subfloat[兩群資料]{
+       		\includegraphics[scale=0.15]{\imgdir Class2Data.jpg}}
+       		\subfloat[三群資料]{
+       		\includegraphics[scale=0.15]{\imgdir Class3Data.jpg}}
+       		\caption{實驗資料集}   
+   			\label{fig:cmpData12}
+		\end{figure}
+		圖\ref{fig:cmpData12}\ 中，包含兩種類別的資料，資料筆數為1000筆，以及三種類別的資料，資			料筆數為900筆，分別用來測試模型成效，而在資料備妥後，先以兩種類別資料做實驗。
+		\bigskip		
+		\begin{enumerate}
+		\item {\textbf{兩種類別實驗}\\
+			在兩種類別資料實驗中，我們將資料讀入後，隨機將資料區分為訓練資料集和測試資料集，其中兩				者比例為$7:3$，利用70\%的資料訓練模型，其餘30\%的資料測試模型正確與否，程式如下所					示：			
+ 			\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\
+					load Class2Data.mat;\\
+					n=size(x,1)\\
+					p=0.7;\\
+					trainNum = n*p;\\
+					testNum = n - trainNum;\\
+					index = randperm(n);\\
+					trainX = x(index(1:trainNum),:)\\
+					trainG = y(index(1:trainNum),:);\\
+					testX = x(index(trainNum+1:end),:);\\
+					testG = y(index(trainNum+1:end),:)\\
+				\end{tabular}
+			}
+			\end{center}
+			\bigskip	
+			如此一來，訓練資料集便是變數"trainX"和"trainG"，其中"G"代表群組別，接著我們透過					MATLAB內建函數，建立LDA、QDA、KNN模型，並且計算其模型之正確率，而建模與計算正確率之				語法如下；
+			\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\
+					LDA = fitcdiscr(trainX,trainG);\\
+					QDA = fitcdiscr(trainX,trainG,'DiscrimType','quadratic');\\
+					knn5 = fitcknn(trainX,trainG,'NumNeighbors',5);\\
+					knn15 = fitcknn(trainX,trainG,'NumNeighbors',15);\\
+					trainAccLDA=1-resubLoss(LDA);trainAccknn5=1-resubLoss(knn5)\\
+					trainAccQDA=1-resubLoss(QDA);trainAccknn15=1-resubLoss(knn15)					\end{tabular}
+			}
+			\end{center}
+			其中"trainAcc"開頭變數，即是四種模型之訓練正確率，即"training accuracy"，且實驗結				果如表\ref{table:c2trainAcc}：
+			\bigskip			
+			\begin{table}[h]				
+				\caption{兩種類別之訓練正確率}\label{table:c2trainAcc}
+				\centering
+				\extrarowheight=8pt
+				\begin{tabular}{p{3cm} p{3cm} p{3cm} p{2cm} } 					
+				\hline
+				LDA\    &QDA \    &KNN(5) \ &KNN(15) \\ \hline	
+				0.9275\ & 0.9612\ & 0.9637\ & 0.9587 \\
+				\hline					
+				\end{tabular}
+			\end{table}
+			\bigskip
+			表\ref{table:c2trainAcc}\ 可以看出，KNN(5)的訓練正確率最高，而LDA之訓練正確率最				低，但這僅僅只是訓練資料，不一定代表此四種模型最後的表現，因此，我們用測試資料集再做一				次預測，結果呈現如表\ref{table:c2testAcc}；
+			\bigskip
+			\begin{table}[h]				
+				\caption{兩種類別之測試正確率}\label{table:c2testAcc}
+				\centering
+				\extrarowheight=8pt
+				\begin{tabular}{p{3cm} p{3cm} p{3cm} p{2cm} } 					
+				\hline
+				LDA\    &QDA \    &KNN(5) \ &KNN(15) \\ \hline	
+				0.9350\ & 0.9700\ & 0.9650\ & 0.9650 \\
+				\hline					
+				\end{tabular}
+			\end{table}
+			\bigskip
+			從表\ref{table:c2testAcc}可以看出測試資料結果，QDA為正確率最高之模型，其次是KNN，				其中KNN之K為5和15在此次範例並無差異，最後表現最差的為LDA，而我們觀察函數圖形，如圖					\ref{fig:c2AllMdl}；
+			\begin{figure}[H]	
+		 		\centering	 			 	 
+   				\includegraphics[width=1\textwidth]{\imgdir c2AllMdl.jpg} 
+   				\caption{四種分類模型}   		
+   		 		\label{fig:c2AllMdl}   			 		 
+			\end{figure}
+			圖\ref{fig:c2AllMdl}\ 可以非常明顯看出資料散佈程度差異非常大，不符合變異數一致					性之假設，因此LDA在此資料集表現非常差，而QDA的曲線完美配適此資料分佈位置，最後KNN以不				規則形狀做分類，雖然也能大致區分不同類別，但在表現上較不如QDA，而最終繪圖之程式碼如下				所示：
+			\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\
+					figure,hold on;gscatter(x(:,1),x(:,2),y,'br','ox',10);\\
+					k=QDA.Coeffs(1,2).Const;L=QDA.Coeffs(1,2).Linear;\\
+					Q=QDA.Coeffs(1,2).Quadratic;\\					
+					f=@(x1,x2)k+L(1)*x1+L(2)*x2+Q(1,1)*x1\^2+(Q(1,2)+Q(2,1))*x1*x2+Q(2,2)*x2\^2\\
+					fimplicit(f,'LineWidth',4);\\
+
+					k=LDA.Coeffs(1,2).Const;L=LDA.Coeffs(1,2).Linear;\\					
+					f=@(x1,x2)k+L(1)*x1+L(2)*x2;\\
+					fimplicit(f,'LineWidth',4);[matrix1,matrix2]=												meshgrid(-6:10,-8:10);\\
+
+					
+					vec1 = matrix1(:);vec2 = matrix2(:);\\					
+					m = predict(knn5,[vec1,vec2]);[mm,nn]=size(matrix1);\\	
+					z=reshape(m,mm,nn);\\
+					contour(matrix1,matrix2,z,[0.5 0.5],'LineWidth',4,'color','g');\\
+
+					m = predict(knn15,[vec1,vec2]);\\
+					z=reshape(m,mm,nn);\\
+					contour(matrix1,matrix2,z,[0.5 0.5],'LineWidth',											4,'color','black');\\
+
+					hold off;legend('0','1','QDA','LDA','KNN5','KNN15')\\	
+					title('四種分類模型');grid;set(gca,'fontsize',30);\\	
+				\end{tabular}
+			}
+			\end{center}
+			\bigskip
+			而將資料分割，建模，繪圖三種程式碼彙整，即是本文所實驗之完整程式碼。
+				
+		}
+		\item {\textbf{三種類別實驗}\\
+			在三種類別之實驗，我們和先前一樣，隨機將資料分割成訓練資料集與測試資料集，接著進行建模				與計算訓練正確率，如表\ref{table:c3trainAcc}：
+			\bigskip			
+			\begin{table}[h]				
+				\caption{三種類別之訓練正確率}\label{table:c3trainAcc}
+				\centering
+				\extrarowheight=8pt
+				\begin{tabular}{p{2.5cm} p{2.5cm} p{2.5cm} p{2cm} } 					
+				\hline
+				LDA\    &QDA \    &KNN(5) \ &KNN(15) \\ \hline	
+				0.9196\ & 0.9643\ & 0.9625\ & 0.9589 \\
+				\hline					
+				\end{tabular}
+			\end{table}
+			\bigskip
+			表\ref{table:c3trainAcc}\ 可見此次模型中，訓練正確率最高的為QDA模型，其次是KNN，				而表現最差的依舊是LDA，由圖\ref{fig:cmpData12}\ (b)可見，三種類別的模型，散佈程度				依舊差距極大，應該理論上來說，LDA確實在此依舊不具備良好分類器之條件，而KNN在不基於任				何假設下，也維持高水準之正確率。\\
+			\\
+			再者，我們一樣透過語法檢視模型測試正確率，如表\ref{table:c3testAcc}：
+			\bigskip			
+			\begin{table}[h]				
+				\caption{三種類別之測試正確率}\label{table:c3testAcc}
+				\centering
+				\extrarowheight=8pt
+				\begin{tabular}{p{2.5cm} p{2.5cm} p{2.5cm} p{2cm} } 					
+				\hline
+				LDA\    &QDA \    &KNN(5) \ &KNN(15) \\ \hline	
+				0.9167\ & 0.9625\ & 0.9500\ & 0.9583 \\
+				\hline					
+				\end{tabular}
+			\end{table}
+			\bigskip
+			由表\ref{table:c3testAcc}之測試正確率可見，QDA在三種類別之分群上，表現最為優異，而				值得討論的是，KNN(5)在訓練資料時以0.9625之正確率高於KNN(15)，但在測試時，卻是由					KNN(15)以0.9583之正確率優過KNN(5)，可見在訓練資料時，正確率高不一定能反映在測試時，				若是訓練資料正確率極高，卻在測試時有差強人意的表現，很可能其中有									\textbf{overfitting}之問題存在。\\
+			\\
+			而overfitting顧名思義就是過度學習訓練資料，變得無法順利去預測或分辨不是在訓練資料內的				其他資料，然而，機器學習的目標就是要訓練機器擁有人類的思考，並且擁有解決一般問題的能				力，即使看到沒有包含在訓練資料的資料，也是要可以正確辨識的，因此，回到實驗主題中，					KNN(5)雖然擁有良好的訓練正確率，但若與KNN(15)比較，我們依舊偏好有著較高測試正確率之				KNN(15)。
+				
+		}
+		\end{enumerate}
+	\section{結論}
+		綜合以上幾種實驗，我們可以得到表\ref{table:result}\ 之彙整資料：
+		\bigskip			
+			\begin{table}[H]				
+				\caption{綜合兩群及三群之測試正確率}\label{table:result}
+				\centering
+				\extrarowheight=8pt
+				\begin{tabular}{lrrrr} 					
+				\hline
+				&\multicolumn{2}{c}{兩群實驗}	 &\multicolumn{2}{c}{三群實驗}\\ 									\hline
+				    &訓練正確率 &測試正確率 &訓練正確率 &測試正確率 \\ \hline 
+	LDA & 92.8\%  &93.5\%    &92.0\%  &91.7\%   \\ 	
+	QDA & 96.1\%  & 97.0\%  &96.4\% &96.3\% \\ 
+	KNN(5) & 96.4\%  &96.5\% &96.3\%   &95.0\%   \\ 
+	KNN(15) & 95.9\%  &96.5\%  &95.9\% &95.8\% \\ 
+				\hline					
+				\end{tabular}
+			\end{table}
+			\bigskip
+		表\ref{table:result}\ 中QDA在兩實驗都扮演最優異之分類器，因為其高測試正確率，在分類成效上良好，但QDA在訓練資料上並非皆為最佳，在兩群中我們可以看到KNN(5)在訓練上表現較為優異，而KNN分類表現雖然在測試上都並非頂尖，但也一直扮演優良的分類角色，由於其概念簡單，正確率上又不亞於QDA許多，因此在實務上也能占據重要地位。至於LDA在此次實驗中皆未有良好分類表現，由於此次實驗之模擬資料，變異程度相差甚高，因此LDA在理論上已經無法滿足，在實務呈現理所當然也會成效不佳，這也驗證了LDA確實是需要基於各個群組共變異數皆為一致，LDA方能有所表現。\\
+	
+%\end{document}

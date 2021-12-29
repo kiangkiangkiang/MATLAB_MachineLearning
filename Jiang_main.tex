@@ -1,0 +1,87 @@
+%\input{Jiang_Book_Preamble} 
+\input{jiang_bookPreamble} 
+%\usepackage{wallpaper} 
+%\URCornerWallPaper{0.15}{\imgdir mactexlogox5.png}%右上角的圖
+% 啟動索引製作，(1) 配合 \usepackage{makeidx} 使用，
+%                      (2) 在文件 \begin{document} 前加入 \makeindex
+%                      (3) 在文件最後要印出索引的地方加入 \printondex
+%                      (4) 在文章中欲編入索引的文字後加上 \index{該文字}
+%                      (5) 編譯時加入 makeindex 一至兩次
+\makeindex 	
+\begin{document}
+%---封面製作 ------------------------------------
+\fontsize{36}{30pt}\selectfont
+\thispagestyle{empty}
+\begin{flushright}
+    {\MJH \XeLaTeX 統計與程式}\\
+    \rule{3in}{0.2pt}\\
+    \medskip\hfill \Large {\sNSM 江柏學}\rule{8mm}{0pt}   
+    \medskip \par\vspace*{-2pt}\hfill \small{710933118}\rule{8mm}{0pt} 
+    \medskip \par\vspace*{-2pt}\hfill \small\today\rule{8mm}{0pt}
+\end{flushright}
+\bigskip\bigskip\bigskip\bigskip
+\begin{figure}[h]
+    
+        \includegraphics[scale=0.8]{\imgdir front3.jpg}%封面圖片不是放在graph下面，利用新指令指到正確位置
+   \end{figure}
+\rule{3in}{0.2pt}\\
+ \Large {\ESITC{\LaTeX \  \& \  MATLAB}}
+     
+%\begin{figure}[H]
+%    \centering
+ %       \subfloat{
+ %       \includegraphics[scale=1]{\imgdir miktex.png}}\hspace{1.4cm}
+ %       \subfloat{
+ %       \includegraphics[scale=1]{\imgdir mactexlogox5.png}}
+ %   \label{fig:mainpage_parallel}
+%\end{figure}
+    
+\fontsize{12}{22pt}\selectfont
+
+%--- 製作目錄 -----------------------------------
+\newpage
+\cleardoublepage
+\setcounter{tocdepth}{2} % 目錄層次
+\pagenumbering{roman}  % 羅馬文頁碼
+
+\tableofcontents%開始製作目錄
+\newpage
+\renewcommand{\numberline}[1]{\loflabel~#1\hspace*{1em}}% 圖目錄出現 圖 x.x 的「圖」字
+\listoffigures %圖目錄
+\newpage
+\renewcommand{\numberline}[1]{\lotlabel~#1\hspace*{1em}}% 表目錄出現 表 x.x 的「表」字
+\listoftables % 表目錄
+\newpage
+%--- 放入各章 -----------------------------------
+\include{Summer0_710933118}
+%\include{Book_preface_1} 	% 序言
+%\include{Book_preface_2}	% 序言
+%下面那行 保證基數頁是每張開頭
+\ifodd\count0 \else \thispagestyle{empty}\mbox{}\clearpage\fi % 如果是偶數頁就呈現空白頁
+\pagenumbering{arabic} 		% 阿拉伯文頁碼
+\setcounter{page}{1} 		% 第一章 從第 1 頁開始
+
+\include{Summer_710933118}
+\include{Summer2_710933118}
+\include{Summer3_710933118}
+\include{Summer4_710933118}
+\include{Summer5_710933118}
+\include{Summer6_710933118}
+\include{Summer7_710933118}
+%-------Reference--------------------------------------------------------------------------------------------
+%\bibliographystyle{amsplain}
+%\bibliographystyle{plain}
+%\bibliographystyle{plainnat}
+%\bibliographystyle{abbrvnat}
+%\bibliographystyle{unsrtnat}
+%\bibliographystyle{apacite}   
+
+%\renewcommand\bibname{}
+%\chapter*{參考文獻} %製作標題
+%\addcontentsline{toc}{chapter}{參考文獻} %加入目錄
+  
+%\bibliography{WANG_ref}
+
+%\include{Book_appendix}
+%\printindex 						% 印出索引頁
+\end{document}

@@ -1,0 +1,719 @@
+%\input{../Jiang_Preamble}
+%\title{\MJHmarker MATLAB實作函數圖形}
+%\author{{\MJH 江柏學}}
+%\date{\today}  
+%\begin{document}
+%	\maketitle
+%	\fontsize{12}{22pt}\selectfont
+\chapter{\MJH MATLAB實作函數圖形}	
+	\textbf{MATLAB}是MATrix LABoratory（矩陣實驗室）的縮寫，是一款由美國The MathWorks公司出		品的商業數學軟體。MATLAB是一種用於演算法開發、資料視覺化、資料分析以及數值計算的進階技術計算語		言和互動式環境。除了矩陣運算、繪製函數/資料圖像等常用功能外，MATLAB還可以用來建立使用者介面及與		呼叫其它語言（包括C、C++、Java、Python和FORTRAN）編寫的程式。
+
+	儘管MATLAB主要用於數值運算，但利用為數眾多的附加工具箱\emph{（Toolbox）}它也適合不同領域的應		用，例如控制系統設計與分析、圖像處理、訊號處理與通訊、金融建模和分析等。另外還有一個配套軟體包		\textbf{Simulink}，提供一個視覺化開發環境，常用於系統類比、動態/嵌入式系統開發等方面。			\footnote{資料源自:維基百科 (https://zh.wikipedia.org/wiki/MATLAB)}
+	
+	而本文將介紹如何實作MATLAB程式，並且著重在數學之函數圖形上的展現，除了將探討每個數學式子所呈現		的圖形外，更藉由\XeLaTeX 編制，結合兩種方便並廣為人知的語言，介紹數學最原始的樣貌，而以下將先		探討基礎函數圖形，接著深入分析複雜之函數圖形以及利用MATLAB中不同繪圖方式，展現較多元的圖片風			貌。
+	
+	另外，由於經費限制，硬體設備無法更進，知識涵養也仍在努力充實，EPS圖無法有效顯示，因此以下圖片皆		以JPG圖檔為例，還請讀者多多包容，感謝。
+	
+	\section{基礎函數圖形介紹 - 以12種函數為例}
+		\subsection{$ y=f(x)=sin(x)+cos(x)$}
+		\rule{\textwidth}{0.2pt}				
+			\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					f = @(x) sin(x)+cos(x);\\
+					fplot(f,[-10,10],'LineWidth',3);\\
+					ylim([-2,2]);\\
+					grid;\\
+					title('f(x) = sin(x) + cos(x)');\\					
+				\end{tabular}
+			}
+			\end{center}			
+		\bigskip
+		函數圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_plot1.jpg} 
+   			 \caption{$ y=f(x)=sin(x)+cos(x)$}   		
+   			 \label{plot1}   			 		 
+		\end{figure}		
+		可以從圖\ref{plot1} 看出 $sin(x)+cos(x)$ 在$y=-1.5$ 與$y=1.5$之間徘迴，形成波型圖，			且圖中也可顯而易見此通過$(0,1)$且至高點與低點在$y=1.414$與$y=-1.414$，而此標示僅需點擊			MATLAB產生之圖片即可，而程式碼中也透漏可以從"LineWidth"調整線的粗細，此題則以3單位為例，			最後以"grid"加上格線，title產生標題，則形成基本函數圖型。		
+		\subsection{$y=f(x)=\frac{1-e^{-2x}}{1+e^{-2x}}$}
+		\rule{\textwidth}{0.2pt}				
+			\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					f = @(x) (1-exp(-2*x))*(1+exp(-2*x)).$\^$(-1);\\
+					plot2 = fplot(f);\\
+					xlim([-3,3]);grid;\\					
+					title('f(x)=(1-e$\backslash\^$(-2x))/(1+e$\backslash\^$(-2x))')\\
+					set(plot2,'linewidth',4);set(plot2,'color','red');\\				
+					text(0.1,0,'when x = 0 -> y = 0');\\
+					text(1.8,0.92,'lim(x->∞) , y->1');\\
+					text(-2.5,-0.9,'lim(x->-∞) , y->-1');\\
+					set(plot2,'linestyle',':')\\		
+				\end{tabular}
+			}
+			\end{center}	
+		\newpage
+		函數圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_plot2.jpg} 
+   			 \caption{$y=f(x)=\frac{1-e^{-2x}}{1+e^{-2x}}$}   		
+   			 \label{plot2}   			 		 
+		\end{figure}
+		
+		由圖\ref{plot2} 可見，此圖不但通過原點，並且當$x$趨近於負無限大時，$y$將收斂到$-1$，而			當$x$趨近於無	限大時，$y$則趨近於$1$，而從MATLAB角度來觀察，則可發現此圖增加圖片敘述，				以"text"呈現，而線也藉由"linestyle"，由實線變成虛線，最後以"color"改變色彩，則可形成較			圖\ref{plot1}更精美的圖型，而由於MATLAB中變數較常以向量形式表現，因此在除法上不易實現，			本例特別由基本除法，改成$-1$次方。
+		\newpage
+		\subsection{$y=f(x)=\sqrt[3]{\frac{4-x^{3}}{1+x^{2}}}$}
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					f = @(x) ((4-x$\^$3)*(1+x$\^$2).$\^$(-1))$\^$(1/3);\\
+					myFigure = figure;ylim([0,3]);\\
+					plot3 = fplot(f,[-20,3]);\\	
+					set(plot3,'color','\# ffb5ff');\\					
+					title('f(x) = ((4-x$\backslash\^$3)/(1+x$\backslash\^$2))$								\backslash\^$(1/3)')\\
+					set(plot3, 'Marker', 'd');\\
+					magnify(myFigure);grid;set(plot3,'linewidth',2);\\
+				\end{tabular}
+			}
+			\end{center}			
+		\bigskip
+		函數圖形呈現如下:	
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_OrginalPlot3.jpg} 
+   			 \caption{$y=f(x)=\sqrt[3]{\frac{4-x^{3}}{1+x^{2}}}$}   		
+   			 \label{plot3}   			 		 
+		\end{figure}
+		\bigskip	
+		圖\ref{plot3} 中新增了"Marker"，讓圖形內每個點更能顯而易見的看出，並且，我們可以看出在			$x=0$時，圖形上有明顯的起伏變化，因此利用額外下載之函數"magnify"，讓使用者能透過游標的移			動，有著放大鏡的效果，如此可以更簡易的觀察有興趣之區域，如下圖所示:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_plot3.jpg} 
+   			 \caption{部分放大 $y=f(x)=\sqrt[3]{\frac{4-x^{3}}{1+x^{2}}}$}   		
+   			 \label{plot3_zoom}   			 		 
+		\end{figure}
+		\bigskip
+		\subsection{$y=f(x)=\frac{1}{x-1}$}%4
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					f= @(x) 1/(x-1);\\
+					plot4 = fplot(f);\\
+					xlim([-1,3]);\\
+					ylim([-50,50]);\\
+					set(plot4, 'linestyle', ':'); \\
+					set(plot4,'linewidth',3);\\
+					grid;\\
+					title('f(x)=1/(1-x)');\\
+				\end{tabular}
+			}
+			\end{center}			
+		\bigskip
+		函數圖形呈現如下:	
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_OrginalPlot4.jpg} 
+   			 \caption{$y=f(x)=\frac{1}{x-1}$}   		
+   			 \label{plot4}   			 		 
+		\end{figure}
+		\bigskip
+		圖\ref{plot4}以原點對稱，並且無限趨近於$x=0$與$y=1$，而此例隨無透過原始程式碼作圖形上的			更動，但卻能由MATLAB內建繪圖程式，對圖片進行修改，以此為例，修改了"grid"之色彩，以及其透			明度，而以下兩圖則是為了能夠更明顯看出漸進效果而增添:
+		\begin{figure}[H]
+    		 \centering
+      		 \subfloat[圖形左側分佈]{
+       		 \includegraphics[scale=0.15]{\imgdir homework2_plot4_down.jpg}}
+        	 \subfloat[圖形右側分佈]{
+       		 \includegraphics[scale=0.15]{\imgdir homework2_plot4_up.jpg}}
+   			 \caption{$y=f(x)=\frac{1}{x-1}$}
+   			 \label{plot4_updown}
+		\end{figure}
+		\newpage
+		\subsection{$y=f(x)=\frac{1}{2\sqrt{2\pi}}e^{\frac{-(x-1)^2}{8}}$}%5
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					f = @(x) (1/(2*(sqrt(2*pi))))*exp((-(x-1)$\^$2)/(8));\\
+					plot5 = fplot(f);\\
+					xlim([-6,8]);\\
+					ylim([0,0.3]);\\
+					set(plot5,'linewidth',2);\\
+					set(plot5, 'MarkerSize', 10); \\
+					set(plot5,'color','blue');\\
+					grid;\\
+					line([1 1],[-100 0.2],'LineStyle',':','linewidth',1,'color','red')
+					\\line([-3 -3],[-100 100],'LineStyle',':','linewidth',									1,'color','red')\\
+					line([5 5],[-100 100],'LineStyle',':','linewidth',1,'color','red')
+					\\text(1,0.21,'mean = 1');\\
+					text(-4.3,0.03,'mean - 2sigma');\\
+					text(5.1,0.028,'mean + 2sigma');\\
+					title('f(x)=(1/2*(2$\backslash$pi)$\backslash\^$(1/2))*e$								\backslash\^$(-(x-1)$\backslash\^$2/8)');\\
+				\end{tabular}
+			}
+			\end{center}			
+		\newpage
+		函數圖形呈現如下:	
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_OrginalPlot5.jpg} 
+   			 \caption{$y=f(x)=\frac{1}{2\sqrt{2\pi}}e^{\frac{-(x-1)^2}{8}}$}   		
+   			 \label{plot5}   			 		 
+		\end{figure}
+		
+		圖\ref{plot5}在統計上呈現常態分佈，且平均數為$1$，變異數為$4$，因此才以$x=1$呈現左右對			稱之情形，而此例中更是增加三條虛線，分別是$\mu - 2\sigma$，$\mu$，$\mu+2\sigma$，在				MATLAB語法上則是透過"line"來實現垂直線的做法，其中本例第一個參數是$x$之範圍，第二個參數是			$y$範圍，其後等同"plot"可改變屬性，其中若無法直覺觀察出本例是常態分配的話，可用$x$與$y$界			限調整，讓"xlim"調至令圖形對稱位置，可較輕鬆理解圖形分佈。
+		\newpage
+		\subsection{$y=f(x)=\sqrt[3]{x^2}$}%6		
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					f = @(x) x$\^$(2/3)\\
+					plot6 = fplot(f);\\
+					xlim([-10,10]);\\
+					ylim([-10,10]);\\
+					set(plot6,'linewidth',3);\\
+					set(plot6, 'MarkerSize', 8);\\ 
+					set(plot6,'color','red');\\
+					set(plot6,'MarkerEdgeColor','b');\\
+					set(plot6,'MarkerFaceColor','y');\\
+					set(plot6, 'Marker', 'd');\\
+					title("f(x)=x$\backslash\^$(2/3)");\\
+					grid
+				\end{tabular}
+			}
+			\end{center}	
+		函數圖形呈現如下:	
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_plot6.jpg} 
+   			 \caption{$y=f(x)=\sqrt[3]{x^2}$}   		
+   			 \label{plot6}   			 		 
+		\end{figure}
+		\bigskip
+		此例在函數呈現上較單純，由於$f(x)$恆正，因此圖形僅在第一象限呈現，而值得一提的是，本例特別			將"marker"做多方面修改，第一是改變樣式，在圖\ref{plot3}中有提到，而這裡更進一步修改其大			小"MarkerSize"，邊線顏色"MarkerEdgeColor"，以及其內部填滿顏色"MarkerFaceColor"，可			透過不同英文字母，所更動其中各種樣式，最後，背景則透過MATLAB內建繪圖工具完成。
+		
+		\subsection{$y=f(x)=2x^3-x^4$}%7
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					f = @(x) 2*x.$\^$(3)-x.$\^$(4);\\
+					plot7 = fplot(f);\\
+					ylim([-1000,100]);\\
+					xlim([-5,6]);\\
+					set(plot7,'linewidth',2);\\
+					title("f(x)=2x$\backslash\^$3-x$\backslash\^$4");\\
+					line([-10 10] ,[0 0],'color','red');\\
+					grid
+				\end{tabular}
+			}
+			\end{center}			
+		
+		函數圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_OrginalPlot7.jpg} 
+   			 \caption{$y=f(x)=2x^3-x^4$}   		
+   			 \label{plot7}   			 		 
+		\end{figure}
+		
+		圖\ref{plot7} 透過"ylim"的調整縮小後，可以明顯觀察出是一類似拋物曲線，且開口向下，但由此			圖無法看出是否與0有切線，亦或是割線產生，因此藉由以下三種放大可進一步觀察；
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_plot7Left.jpg} 
+   			 \caption{函數$y=f(x)=2x^3-x^4$之左側放大}   		
+   			 \label{plot7Left}   			 		 
+		\end{figure}
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_plot7Mid.jpg} 
+   			 \caption{函數$y=f(x)=2x^3-x^4$之中間放大}   		
+   			 \label{plot7Mid}   			 		 
+		\end{figure}
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_plot7Right.jpg} 
+   			 \caption{函數$y=f(x)=2x^3-x^4$之右側放大}   		
+   			 \label{plot7Right}   			 		 
+		\end{figure}
+		其中在圖\ref{plot7Mid}(中圖)中，在放大若干倍可見函數以落在紅線($y=0$)之上，因此更可確定			此函數與$x$軸焦於兩點。
+		\newpage
+		\subsection{$y=f(x)=x\sqrt{4-x^2}$}%8
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					f = @(x) x*sqrt(4-x.$\^$(2));\\
+					plot8 = fplot(f);\\
+					ylim([-2.5,2.5]);\\
+					xlim([-3,3]);\\
+					set(plot8,'linewidth',2);\\
+					title("f(x)=x*sqrt(4-x$\backslash\^$2)");\\
+					line([-10 10] ,[2 2],'linestyle',':','color','red');\\
+					line([-10 10] ,[-2 -2],'linestyle',':','color','red');\\
+					grid\\
+				\end{tabular}
+			}
+			\end{center}			
+		
+		函數圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_OrginalPlot8.jpg} 
+   			 \caption{$y=f(x)=x\sqrt{4-x^2}$}   		
+   			 \label{plot8}   			 		 
+		\end{figure}
+		
+		此例是一個類似S形的圖形，其中$x,y$皆介於$2$至$-2$之間，因此刻意加上"line"指令做出虛線，			更方便辨識其定義域，而此例也特別放大其漸進$x=2$與$y=2$的部分，以及$x=-2$和$y=-2$，如下			圖所示:
+		
+		\begin{figure}[H]
+    		 \centering
+      		 \subfloat[圖形左側分佈]{
+       		 \includegraphics[scale=0.15]{\imgdir homework2_plot8Left.jpg}}
+        	 \subfloat[圖形右側分佈]{
+       		 \includegraphics[scale=0.15]{\imgdir homework2_plot8Right.jpg}}
+   			 \caption{$y=f(x)=x\sqrt{4-x^2}$}
+   			 \label{plot8_leftright}
+		\end{figure}		
+		\subsection{$y=f(x)=\frac{\ln x}{x^3}$}%9
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					f = @(x) log(x)*x.$\^$(-3);\\
+					plot9 = fplot(f);\\
+					line([-10 10] ,[0 0],'linestyle',':','color','red');\\
+					grid\\
+					title("f(x)=ln(x)/x$\backslash\^$3");\\
+					set(plot9,'linewidth',2);\\
+					xlim([-2 10]);\\
+					ylim([-10 2]);\\
+				\end{tabular}
+			}
+			\end{center}
+			\newpage			
+		函數圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_OrginalPlot9.jpg} 
+   			 \caption{$y=f(x)=\frac{\ln x}{x^3}$}   		
+   			 \label{plot9}   			 		 
+		\end{figure}
+		
+		此例一樣須注意向量中，除法不易執行，因此一樣使用$-3$次方完成除法的部分，而此圖看似與$x$軸			有漸進線，卻無法確定是否存在交點，因此刻意放大觀察，如下圖:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_plot9Zoom.jpg} 
+   			 \caption{$y=f(x)=\frac{\ln x}{x^3}$}   		
+   			 \label{plot9zoom}   			 		 
+		\end{figure}
+		
+		確定有與$x$軸有交點，並非漸進線，更進一步觀察:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_plot9Zoom2.jpg} 
+   			 \caption{$y=f(x)=\frac{\ln x}{x^3}$}   		
+   			 \label{plot9zoom2}   			 		 
+		\end{figure}
+		
+		約在$x=1$時存在交點。
+		
+		\subsection{$y=f(x)=3,1\leq x \leq5$}%10
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					line([1 5] ,[3 3],'color','red','linewidth',3);\\
+					title("y=f(x)=3");\\
+					xlim([0.5 5.5])\\
+					grid\\
+				\end{tabular}
+			}
+			\end{center}	
+				
+		函數圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_plot10.jpg} 
+   			 \caption{$y=f(x)=3,1\leq x \leq5$}   		
+   			 \label{plot10}   			 		 
+		\end{figure}
+		此例較為單純，僅須注意$x$的定義域僅限於$1$至$5$，因此設定'line'時，$x$範圍以"[1 5]"表			現。
+		
+		\subsection{$x^2+y^2=1$}%11
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					f=@(x,y) x.$\^$2+y.$\^$2-1;\\
+					plot11=fimplicit(f , [-1.5 1.5 -1.5 1.5]);\\
+					set(plot11,'marker','s');\\
+					grid\\
+					title('x$\backslash\^$2+y$\backslash\^$2=1')\\
+				\end{tabular}
+			}
+			\end{center}	
+		\newpage	
+		函數圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_plot11.jpg} 
+   			 \caption{$x^2+y^2=1$}   		
+   			 \label{plot11}   			 		 
+		\end{figure}
+		
+		本例子需要用到"fimplicit"輔佐"，有別於先前僅是透過"fplot"可完成，由於此例是方程式，並非			多項式，因此需將等號左右整理成類似$ax+by+c=0$之形式，將左式帶入先前變數f，再藉					由"fimplicit"將此多項式形式轉成方程式存入變數"plot11"，而其中後面"[-1.5 1.5 -1.5 				1.5]"則是設定$x,y$界限，亦可用"set"設定，最後作法和先前一致即可完成方程式圖形。
+		\newpage
+		\subsection{正方形}%12
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					title('正方形');\\
+					grid;\\
+					xlim([0 3])\\
+					ylim([0 3])\\
+					line([1 2] ,[1 1],'color','red','linewidth',3);\\
+					line([1 2] ,[2 2],'color','red','linewidth',3);\\
+					line([1 1] ,[1 2],'color','red','linewidth',3);\\
+					line([2 2] ,[1 2],'color','red','linewidth',3);\\
+				\end{tabular}
+			}
+			\end{center}	
+				
+		函數圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir homework2_plot12.jpg} 
+   			 \caption{正方形}   		
+   			 \label{plot12}   			 		 
+		\end{figure}
+		
+		先前多次以"line"做出水平，垂直線等，而正方形亦可透過水平與垂直線形成，僅需控制$x$與$y$的			範圍即可達成！
+	\section{特殊函數圖形呈現}
+		\subsection{$f(y)=\frac{1}{\beta}e^{\frac{-y}{\beta}},0\leq y \leq \infty$}%o1
+		
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					x=[0 :0.1:5];\\
+					beta=1;\\
+					y=(beta$\^$(-1))*exp((-x)*(beta$\^$(-1)));\\
+					plotO1 = plot(x,y);\\
+					set(plotO1,'linewidth',3);\\
+					ylim([0 1])\\
+					title("Exponential Probability Distribution ($\backslash$beta = 						1)")\\
+					xlabel("x")\\
+					ylabel('Probability Density Function')\\
+					grid;\\
+					set(gca,'fontsize',14);\\
+				\end{tabular}
+			}
+			\end{center}
+		函數圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir h2plotO1.jpg} 
+   			 \caption{$f(y)=\frac{1}{\beta}e^{\frac{-y}{\beta}},0\leq y \leq \infty$} 	
+   			 \label{h2plotO1}   			 		 
+		\end{figure}		
+		\subsection{$f(y)=\left[ \frac{\gamma (\alpha + \beta)}{\gamma (\alpha)					\gamma (\beta)} \right] y^{\alpha -1}(1-y)^{\beta -1},0 \leq y \leq 1$}%o2
+		
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					alpha = 1;beta =2;x = [0:0.01:1];\\		
+					temp=gamma((alpha+beta)/(gamma(alpha)*gamma(beta)));\\
+					y1 = temp.*(x.$\^$(alpha-1)).*(1-x).$\^$(beta-1);\\
+					alpha = 1;beta = 3;\\					
+					y2 = temp.*(x.$\^$(alpha-1)).*(1-x).$\^$(beta-1);\\
+					alpha = 2;beta = 2;\\					
+					y3 = temp.*(x.$\^$(alpha-1)).*(1-x).$\^$(beta-1);\\
+					alpha = 2;beta = 3;\\					
+					y4 = temp.*(x.$\^$(alpha-1)).*(1-x).$\^$(beta-1);\\
+					alpha = 3;beta = 1;\\					
+					y5 = temp.*(x.$\^$(alpha-1)).*(1-x).$\^$(beta-1);\\
+					alpha = 6;beta = 1;\\					
+					y6 = temp.*(x.$\^$(alpha-1)).*(1-x).$\^$(beta-1);\\
+					plot(x,y1,x,y2,x,y3,x,y4,x,y5,x,y6,'linewidth',2)\\
+					xlim([0,1]);ylim([0,2]);grid\\	
+					legend("$\backslash$ alpha =1 $\backslash$ beta = 2", "$\backslash						$alpha =1 $\backslash$beta = 3","$\backslash$alpha =2$\backslash						$beta = 2","$\backslash$alpha =2 $\backslash$beta = 3","$								\backslash$alpha =3 $\backslash$beta = 1","$\backslash$alpha =6 						$\backslash$beta = 1")\\
+					title("Beta Dist.");xlabel("x")\\					
+					ylabel('Probability Density Function')\\
+					set(gca,'fontsize',14);\\
+				\end{tabular}
+			}
+			\end{center}	
+		
+		函數圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir h2plotO2.jpg} 
+   			 \caption{Beta 分配} 	
+   			 \label{h2plotO2}   			 		 
+		\end{figure}		
+		\subsection{$X^2$ 分配}%o3		
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					v=5;alpha = v/2;beta =2;x = [0:0.1:20];\\
+					temp=1/((gamma(alpha))*(beta$\^$alpha));\\
+					y = temp.*(x.$\^$(alpha-1)).*exp(-x./beta);\\
+					plot(x,y,'linewidth',3,'color','red');hold on;\\
+					title("Chi-square Dist.");\\
+					xlabel("x");grid;\\
+					ylabel('Probability Density Function')\\
+					set(gca,'fontsize',14);\\					
+					myBar=bar(x,y);hold off;\\
+					color \_ background=['c' 'm' 'y' 'k' 'r' 'g' 'b'];\\
+					set(myBar,'FaceColor',color\_ background(7));\\
+				\end{tabular}
+			}
+			\end{center}	
+				
+		函數圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir h2plotO3.jpg} 
+   			 \caption{$X^2$ 分配} 	
+   			 \label{h2plotO3}   			 		 
+		\end{figure}		
+		其中利用了"bar" 讓函數底下面積也能夠一併顯示。而"colorbackground"則先將所有顏色存入後，			未來方便使用，直接從此array內一一叫出即可。
+	\section{其他參數與圖表}
+		\subsection{Marker 使用}%o4
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					f = @(x) x*sqrt(4-x.$\^$(2));\\
+					plot8 = fplot(f);\\
+					ylim([-2.5,2.5]);\\
+					xlim([-3,3]);\\
+					set(plot8,'linewidth',2);\\
+					title("f(x)=x*sqrt(4-x$\backslash\^$2)");\\
+					line([-10 10] ,[2 2],'linestyle',':','color','red');\\
+					line([-10 10] ,[-2 -2],'linestyle',':','color','red');\\
+					set(plot8, 'Marker', '<');\\
+					set(plot8, 'MarkerSize', 18); \\
+					set(plot8,'color','b');\\
+					set(plot8,'MarkerEdgeColor','g');\\
+					set(plot8,'MarkerFaceColor',[1 .6 .6]);\\
+					grid\\
+				\end{tabular}
+			}
+			\end{center}
+		此例"Marker"設定為"<"，也就是三角形的圖式，以下總共六種範例以供參考，皆式調整"Marker"參			數可能，其中包含"+"，"*"，"o"，"p"等等。
+		\begin{figure}[H]
+    		 \centering
+      		 \subfloat[--gs]{
+       		 \includegraphics[scale=0.15]{\imgdir h2plotO4_1.jpg}}
+        	 \subfloat[-o]{
+       		 \includegraphics[scale=0.15]{\imgdir h2plotO4_2.jpg}}
+   			 \caption{Marker 展示 "--gs"和"--o"}
+   			 \label{plot412}
+		\end{figure}	
+		\begin{figure}[H]
+    		 \centering
+      		 \subfloat[*]{
+       		 \includegraphics[scale=0.15]{\imgdir h2plotO4_3.jpg}}
+        	 \subfloat[h]{
+       		 \includegraphics[scale=0.15]{\imgdir h2plotO4_4.jpg}}
+   			 \caption{Marker 展示 "*"和"h"}
+   			 \label{plot434}
+		\end{figure}	
+		\begin{figure}[H]
+    		 \centering
+      		 \subfloat[+]{
+       		 \includegraphics[scale=0.15]{\imgdir h2plotO4_5.jpg}}
+        	 \subfloat[<]{
+       		 \includegraphics[scale=0.15]{\imgdir h2plotO4_6.jpg}}
+   			 \caption{Marker 展示 "+"和"<"}
+   			 \label{plot456}
+		\end{figure}	
+		\subsection{linestyle 使用}%o4
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					x = 0:pi/100:2*pi;\\
+					y1 = sin(x);\\
+					y2 = sin(x-0.25);\\
+					y3 = sin(x-0.5);\\
+					y4 = sin(x-0.75);\\
+					y5 = sin(x-1);\\
+					y6 = sin(x-1.25);\\
+					figure\\
+					plot(x,y1,x,y2,'--',x,y3,':',x,y4,'b--o',x,y5,'c*',x,y6,'-.')\\
+					title('LineStyle Display')\\
+					set(gca,'fontsize',16);\\
+					grid\\
+				\end{tabular}
+			}
+			\end{center}
+		圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir h2plotO5.jpg} 
+   			 \caption{linestyle 展示} 	
+   			 \label{h2plotO5}   			 		 
+		\end{figure}
+		透過"linestyle"可以設定不同種類的線，其中包含"--"，"c*"，"-."等等。
+		\subsection{Bar 使用}%o4		
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					x = 1900:10:2000;\\
+					y = [100 91 50 123.5 131 20 179 203 200 249 100];\\
+					bar(x,y,'facecolor','black')\\
+				\end{tabular}
+			}
+			\end{center}
+		圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir h2plotB1.jpg} 
+   			 \caption{一般常見的Bar 展示 } 	
+   			 \label{h2plotB1}   			 		 
+		\end{figure}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					y = [2 2 3; 2 5 6; 2 8 9; 2 11 12];\\
+					bar(y,'stacked')\\
+				\end{tabular}
+			}
+			\end{center}
+		圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir h2plotB2.jpg} 
+   			 \caption{多條Bar重疊 展示} 	
+   			 \label{h2plotB2}   			 		 
+		\end{figure}
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					x = [1 2 3];\\
+					vals = [20 15 6; 11 23 26];\\
+					b = bar(x,vals);\\
+					set(b(1),'FaceColor','y');\\
+					set(b(2),'FaceColor','g');\\
+					grid;\\
+					title("My Bar");\\
+					set(gca,'fontsize',16);\\
+				\end{tabular}
+			}
+			\end{center}
+		圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir h2plotB3.jpg} 
+   			 \caption{並排Bar 展示} 	
+   			 \label{h2plotB3}   			 		 
+		\end{figure}
+		\subsection{Histogram 使用}%o4
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					x = randn(1000,5); \\
+					nbins = 7;\\
+					hist(x,nbins);\\
+				\end{tabular}
+			}
+			\end{center}
+		圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir h2plotH1.jpg} 
+   			 \caption{Histogram 展示} 	
+   			 \label{h2plotH1}   			 		 
+		\end{figure}
+		\subsection{Scatter 使用}%o4		
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					x = linspace(0,3*pi,200);\\
+					y = cos(x) + rand(1,200);\\
+					sz = 50;\\
+					c = linspace(1,10,length(x));\\
+					scatter(x,y,sz,c,'filled')\\
+				\end{tabular}
+			}
+			\end{center}
+		圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir h2plotS1.jpg} 
+   			 \caption{Scatter 展示} 	
+   			 \label{h2plotS1}   			 		 
+		\end{figure}
+		其中可以利用scatter中第三個參數調整點的大小，第四個參數調整顏色，第五個參數調整是否填滿。
+		\subsection{Pie 使用}%o4		
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					X = [2 2 0.3 5 1];\\
+					explode = [0 0 1 1 0];\\
+					pie(X,explode)\\
+				\end{tabular}
+			}
+			\end{center}	
+			
+		圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir h2plotP1.jpg} 
+   			 \caption{Pie分割 展示} 	
+   			 \label{h2plotP1}   			 		 
+		\end{figure}
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					X = [2 2 0.3 5 1];\\
+					pie(X)\\
+				\end{tabular}
+			}
+			\end{center}	
+			
+		圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir h2plotP2.jpg} 
+   			 \caption{一般常見的Pie 展示} 	
+   			 \label{h2plotP2}   			 		 
+		\end{figure}
+		\rule{\textwidth}{0.2pt}
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{MATLAB語法 :}}\\					
+					X = [0.3 0.4 0.1];\\
+					pie(X)\\
+				\end{tabular}
+			}
+			\end{center}	
+			
+		圖形呈現如下:
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=1\textwidth]{\imgdir h2plotP3.jpg} 
+   			 \caption{特定缺口之Pie 展示} 	
+   			 \label{h2plotP3}   			 		 
+		\end{figure}
+		
+	\section{結論 {\ESITC{Conclusion}}}
+		透過MATLAB可以實現各種不同數學函數的圖表產生，並且有別於其他語言，MATLAB更可以透過產生後			的圖表，自行利用內建圖形化界面設定圖內參數等等，不需要一一透過指令即可達成，而指令上來說，				與大部分程式大同小異，若有程式基礎，大概可以猜出大部分內容，並且此軟體也支援許多深度學				習，統計，機器學習方面的APP，若需要亦可從介面中下載，可說是非常方便，在使用方便度與實用性來			說不亞於python或R，而此次也展現其在繪圖上功能的完善之處，與其多樣性，可說是對數學或函數圖			形上最友善的程式語言之一。		
+%\end{document}
+
+
+
+
+

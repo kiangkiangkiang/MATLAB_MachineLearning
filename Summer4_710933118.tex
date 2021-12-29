@@ -1,0 +1,364 @@
+%\input{../Jiang_Preamble}
+%\title{\MJHmarker 監督式學習 \\ \Large{\color{darkblue}{迴歸分類}}}
+%\author{{\MJH 江柏學}}
+%\date{\today}  
+%\begin{document}
+%	\maketitle
+%	\fontsize{12}{22pt}\selectfont
+\chapter{ \MJH 監督式學習之迴歸分類}
+	\textbf{監督式學習 (Supervised learning)} 是電腦從標籤化 (labeled) 的資訊中分析模式後做出		預測的學習方式。標記過的資料就好比標準答案，而本文所探討的方式，正屬於監督式學習。假設我們擁有一		組資料集，我們想知道\textbf{若是存在新的一筆資料，它是否也屬於此資料集}，或是\textbf{對此資料		集進行分類}，有助於\textbf{判斷新的資料歸屬的類別}，舉例來說，若我們能得到大量醫院資料，並找出		幾項誘發高血壓的因素($x$)，是否我們就能歸類有何種$x$傾向的人，較可能罹患高血壓，而面對此問題，		最重要的一點，就是找出合適的分類器，而這也是本文所要探討的，\textbf{從統計的觀點建立合適的分類		器}。
+	\section{迴歸模型}
+		回到上述的問題中，假設我們的資料集中，有一群屬性資料($x$)以及最後目標變數($y$)，要如何得			知擁有何種$x$會形成何種$y$，而在面對此問題時，我們先簡單將資料呈現於平面圖形上：
+		\begin{figure}[H]	
+			\centering	 			 	 
+   			\includegraphics[scale=0.26]{\imgdir sample_ori.jpg} 
+   			\caption{範例資料集}
+   			\label{fig:sample_ori}   			 		 
+		\end{figure}
+		圖\ref{fig:sample_ori}\ 我們假設$x$軸為變數$x1$，$y$軸為變數$x2$，而在此我們以顏			色還有圖形簡單區分$y$變向，可以明顯的看出，圖形呈現兩種不同的類別，並彷彿能以一條線區分開此			二群，但要以何種線段區分呢，本文將一一介紹。		
+		\subsection{簡單線性迴歸}
+			我們首先假設資料集能以$y=\beta_0+ \beta_1 x_1+\beta_2 x_2,\forall y \in 					\{0,1\}$配適，而在此模型下，當$y<0.5$我們就區分為0群，當$y>0.5$就區分成1群，如此便				可得一分類模型，而在此模型底下我們僅需估計出$\beta_0$、$\beta_1$、$\beta_2$即可，				並且令$y=0.5$時，便是此分類器區分之依據，也是圖\ref{fig:sample_ori}中，我們所需的				分類線段，而在此我們利用MATLAB實作幫助研究，透過模擬資料集，一步一步探討此問題：\\		
+			\begin{enumerate}[Step 1：]
+				\item {\textbf{取得並了解資料集}\\
+					在此我們透過MATLAB取得既有的資料集，並對此資料集先進行簡單的觀察，看有無問						題，以及觀察變數大概落的位置，或是先觀察哪些是類別資料哪些是連續資料，如圖							\ref{fig:step1}
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir step1_box.jpg} 
+   			 			\caption{REG範例資料大致分佈}   		
+   			 			\label{fig:step1}   			 		 
+					\end{figure}
+					由圖\ref{fig:step1}可看出兩變數($x_1,x_2$)平均數差不多，但$x_1$變異程度						較大，且可能為右偏分布，而$x2$則看似對稱，變異程度也較小，兩變數皆無離群值，						看起來無較不妥之處。
+				}
+				\item {\textbf{定義Design matrix以及估計Coefficien vector}\\
+					在此我們先定義\textbf{Design matrix}也就是矩陣$X$，令先前資料集中$x_1$及						$x_2$為此設計矩陣之兩變數後，矩陣型態如圖\ref{fig:step2}：
+					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=0.7\textwidth]{\imgdir step2_xMat.jpg} 
+   			 			\caption{Design Matrix}   		
+   			 			\label{fig:step2}   			 		 
+					\end{figure}
+					接著有了設計矩陣後，我們便可透過統計的觀念估計$\beta$，如式\ref{eq:beta}
+					\begin{equation}\label{eq:beta}
+ 						\hat{\beta}=(x^T x)^{-1}x^T y
+ 					\end{equation}
+ 					如此就可以取得完整的線性模型方程式，而每一點也能夠計算出其\textbf{配適值							(fitted value)}，亦可計算出殘差等等資訊。
+				}
+				\item {\textbf{建立模型與分類器}\\
+					最後，由上步的估計值，便可建立出完整迴歸模型，如式\ref{eq:reg}
+					\begin{equation}\label{eq:reg}
+ 						\hat{y}=0.7419-0.1477x_1+0.0835x_2
+ 					\end{equation}
+ 					而有了模型後，我們透過$y=0.5$建立出分類器，而此分類器即是方程式									\ref{eq:model}
+ 					\begin{equation}\label{eq:model} 						
+ 						x_2=-2.897+1.769x_1
+ 					\end{equation}
+ 					最後，便可繪製一條分類線，而此線依據$y$值將資料集區分成兩區塊，如圖								\ref{fig:model1}：
+ 					\begin{figure}[H]	
+		 		 		\centering	 			 	 
+   				 		\includegraphics[width=1\textwidth]{\imgdir model1.jpg} 
+   			 			\caption{分類器}   		
+   			 			\label{fig:model1}   			 		 
+					\end{figure}
+					如此我們便透過迴歸的概念完成一條簡易的分類器，將原始資料區分成兩類，並且建立						模型，因此倘若有新資料，我們亦能推算出新資料的類別，而其中所有程式碼如下所							示：
+					\begin{center}\colorbox{slight}{
+						\begin{tabular}{p{0.9\textwidth}}
+							\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+							D = load('la\_ 1.txt');\\							
+							x1=D(:,1); x2=D(:,2); y=D(:,3);\\
+							gscatter(x1,x2,y,'br','ox',10);\\
+							N=size(D,1);x=[ones(N,1),x1,x2];\\							
+							b=(x'*x)$\backslash$(x'*y)\\
+							f=@(x) (-b(2)/b(3))*x+(0.5-b(1))/b(3);\\
+							hold on;\\
+							fplot(f,[0 6],'LineWidth',3);\\
+							hold off;grid;\\							
+							title('分類器');legend('hide');\\							
+							set(gca,'fontsize',20);\\
+						\end{tabular}
+					}
+					\end{center}
+				}
+			\end{enumerate}
+			我們完成迴歸模型之分類器後，更想知道此分類器判斷的到底對不對，若是有錯誤存在，那麼錯誤				率大概是多少，因此我們實際透過資料集中的$y$和我們所得到的配適值$\hat{y}$相減，並取絕				對值加總後，即得到錯誤的筆數，其中我們令$\hat{y}<0.5$為$0$，$\hat{y}>0.5$為$1$，				以此資料集為例，錯誤筆數有即有12筆，而總筆數為200筆，因此錯誤率為$0.06$，而我們也標明				錯誤判斷之資料如圖\ref{fig:errorData}：
+			\begin{figure}[H]	
+		 		 \centering	 			 	 
+   				 \includegraphics[width=1\textwidth]{\imgdir errorData.jpg} 
+   			 	\caption{錯誤資料}   		
+   			 	\label{fig:errorData}   			 		 
+			\end{figure}
+			圖\ref{fig:errorData}\ 中，以綠色點標示的資料，即為錯誤判斷的資料，而以下為建					模後並取得配適值($\hat{y}$)後的程式碼：
+			\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+					temp=[x,y,yHat];\\
+					errorData=temp(temp(:,3)\ \~\  =temp(:,4),1:2)\\
+					gscatter(x(:,1),x(:,2),y,'br',"ox",10);\\
+					f=@(x) (-b(2)/b(3))*x+(0.5-b(1))/b(3);\\
+					hold on;\\
+					fplot(f,[0 6],'LineWidth',3)\\
+					plot(errorData(:,1),errorData(:,2),'+','Color','g',"LineWidth",5);
+					\\
+					hold off;grid;legend('hide');\\				
+				\end{tabular}
+			}
+			\end{center}
+		\subsection{加廣型迴歸}
+		然而，在日常生活中，並非所有資料都能用簡單線性模型套用，而線性模型也不一定是最好的選項，因			此衍生出其他模型種類，而在此也將介紹其中一種，\textbf{加廣型迴歸}，有別於線性模型，加廣型			有更豐富的可能性，產生的圖形也並非直線，而在繪圖之前，我們先了解其在迴歸上的內涵。
+		\\
+		\\
+		由於加廣型的概念是認為最初假設的函數，可能包含二次項，可能具有共線性，因此我們將最初的假設			加以修改，如式\ref{eq:augMdl}：
+		\begin{equation}\label{eq:augMdl} 
+		y=\beta_0+ \beta_1 x_1+\beta_2 x_2+\beta_3 x_1 x_2+\beta_4 x_1^2+\beta_5 				x_2^2
+		\end{equation}
+		式\ref{eq:augMdl}\ 除了基本兩變數之外，更加入其平方項以及相乘項，而此方式效果呈現如何，			將以MATLAB作展示，和簡單線型迴歸的做法相同，我們透過既有的資料集，進行程式實作：
+		\bigskip
+		\begin{enumerate}[Step 1：]			
+			\item {\textbf{定義Design matrix}\\
+				首先我們已經確定了資料集如上節所示，但由於考量變數由$2$項增至$5$項，因此我們的設					計矩陣同時也更正，如圖\ref{fig:augXMat}：
+				\begin{figure}[H]	
+		 		 	\centering	 			 	 
+   				 	\includegraphics[width=1\textwidth]{\imgdir augXMat.jpg} 
+   			 		\caption{Augmented Model Design Matrix(前十筆)}   		
+   			 		\label{fig:augXMat}   			 		 
+				\end{figure}
+				圖\ref{fig:augXMat}\ 中明顯相較於圖\ref{fig:step2}\ 增加許多變項，因此迴歸模					型也	會較為複雜。
+			}
+			\item {\textbf{估計Coefficien vector}\\
+				在此和簡單線性迴歸一樣，需估計$\beta$，而慶幸的是，此步驟在程式執行上和先前相同，					可以參考式\ref{eq:beta}，而在此以MATLAB估計出的參數如表\ref{table:beta}：
+				\begin{table}[h]				
+					\caption{$\hat{\beta}$ vector}\label{table:beta}
+					\centering
+					\extrarowheight=8pt
+					\begin{tabular}{llllll} 					
+					\hline
+					$\beta_0$\ &$\beta_1$ \ &$\beta_2$ \ &$\beta_3$ \ &$\beta_4$ \ &$						\beta_5$ \\ \hline	
+					0.8051\ & -0.2287\ & 0.0943\ & -0.0043\ & 0.0125\ &-0.0016 \\
+					\hline					
+					\end{tabular}
+				\end{table}
+			}
+			\item {\textbf{建立模型與分類器}\\
+				在我們估計出參數後，建立模型如式\ref{eq:augReg}\ 所示：
+				\begin{equation}\label{eq:augReg}
+					\hat{y} = 0.8051-0.2287x_1+0.0943x_2-0.0043x_1 											x_2+0.0125x_1^2-0.0016x_2^2
+				\end{equation}
+				同理，一樣透過$y=0.5$來建立分類器，並且利用MATLAB繪製分類線，如圖								\ref{fig:augMdl}：
+				\begin{figure}[H]	
+		 		 	\centering	 			 	 
+   				 	\includegraphics[width=1\textwidth]{\imgdir augMdl.jpg} 
+   			 		\caption{Augmented Model}   		
+   			 		\label{fig:augMdl}   			 		 
+				\end{figure}
+				而此例之曲線弧度雖不明顯，但仍可看出與圖\ref{fig:model1}之間的不同。			
+			}
+		\end{enumerate}
+		同樣地，我們一樣關心著此分類器的錯誤率高低，成效如何，因此透過MATLAB實作得出此模型錯誤率依			然為$0.06$，因此我們得知在此資料集當中，簡單線性迴歸的分類器與加廣型迴歸之分類器，錯誤率一			樣，成效相去不遠，然而簡單線性迴歸在實作上較容易，效率較高，因此最此資料集而言，透過簡單線			性迴歸的方式可能更好。
+	\section{模擬資料}
+		我們剛才所用的資料集都是既有的資料集，然而，在日常生活中，以有限的金錢與時間考量下，我們可			能無法取得大量資料集供分析實驗，因此必須考量到如何透過MATLAB程式，自行模擬出資料集，而再透			過資料集進行分析與實驗。
+		\\		
+		在MATLAB中，透過\textbf{mvnrnd}指令可以幫助我們產生多維的常態分佈資料，而我們以下也將利			用此指令幫助我們模擬新的資料集，並且進一步討論此資料集對於研究的優劣程度，指令如下所示：
+		\begin{center}\colorbox{slight}{
+			\begin{tabular}{p{0.9\textwidth}}
+				\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+					n1=200;n2=200;mu1=[0 1];mu2=[4 6];\\					
+					S1=[1 0;0 1];S2=[1 0;0 1];y=[zeros(n1,1);ones(n2,1)];\\				
+					A=mvnrnd(mu1,S1,n1);B=mvnrnd(mu2,S2,n2);\\
+					X=[A;B]\\
+					gscatter(X(:,1),X(:,2),y,'br','ox')\\
+
+			\end{tabular}
+		}
+		\end{center}
+		此程式先定義樣本數n1與n1，接著定義常態分配之參數$\mu$與$\sigma$，還有所要分的類別y，最後			透過\textbf{mvnrnd}以及參數，產生多維常態分佈的資料，最後即可利用此資料集繪圖，如圖				\ref{fig:badData}：
+		\begin{figure}[H]	
+		 	\centering	 			 	 
+   			\includegraphics[width=1\textwidth]{\imgdir badData.jpg} 
+   			\caption{模擬資料之散佈圖}   		
+   			\label{fig:badData}   			 		 
+		\end{figure}
+		然而，這樣的資料對於本文所探討之分類器優劣並無幫助，由於兩群能明顯區分開來，無論何種分類				器，最終所得出的錯誤率都極低甚至為零，鑑別度不高，因此我們利用同樣的方式，反覆實作出以下幾			種不同的資料集，如圖\ref{fig:Data}\ 所示：
+		\begin{figure}[H]
+    		 	\centering
+      			 \subfloat[]{
+       			 \includegraphics[scale=0.15]{\imgdir data_2_3.jpg}}
+        		 \subfloat[]{
+       			 \includegraphics[scale=0.15]{\imgdir data_3_3.jpg}}
+       			 \\
+       			 \subfloat[]{
+       			 \includegraphics[scale=0.15]{\imgdir data_3_5_08.jpg}}
+       			 \subfloat[]{
+       			 \includegraphics[scale=0.15]{\imgdir data_3_5_15.jpg}}
+       			 \caption{模擬不同資料集}   
+   				 \label{fig:Data}
+		\end{figure}
+		圖\ref{fig:Data}\ (a)中，資料太密集，較不易區分，而圖\ref{fig:Data}\ (b)中，兩群分太			開，分類器鑑別度也較低，因此以散佈圖直觀判斷，若要做分類器優劣比較，圖\ref{fig:Data}\ 			(c)與(d)可能會是較優先的選項，而以下也將示範如何透過自己模擬的資料集，比較上節討論的分類			器：
+		\begin{itemize}	
+			\item{\textbf{以圖\ref{fig:Data}\ (c)資料集為例：}
+				我們同樣透過程式碼先觀察資料集大致分布，如圖\ref{fig:c1box}：
+				\begin{figure}[H]	
+		 			\centering	 			 	 
+   					\includegraphics[scale=0.18]{\imgdir c1box.jpg} 
+   					\caption{模擬資料大致分布}   		
+   					\label{fig:c1box}   			 		 
+				\end{figure}
+				初步分析資料，並無離群值，也沒有較特別的異狀，且變數$x_2$較$x_1$變異程度高，而無					異狀後我們直接進行模型配適，而在此不同於先前建模方式，我們以MATLAB本身語法進行，					如下所示：
+				\begin{center}\colorbox{slight}{
+					\begin{tabular}{p{0.9\textwidth}}
+						\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+						set(gca,'fontsize',30);\\
+						D = load('myData2.mat');x=D.X;y=D.y;\\
+						boxplot([x(:,1),x(:,2)]);\\
+						figure,hold on;\\
+						gscatter(x(:,1),x(:,2),y,'br',"ox",10);\\
+						mdl=fitlm(x,y);\\
+						b = mdl.Coefficients.Estimate;\\
+						f=@(x) (-b(2)/b(3))*x+(0.5-b(1))/b(3);\\
+						fplot(f,'LineWidth',3);\\
+						hold off;legend('hide');grid;\\	
+					\end{tabular}
+				}
+				\end{center}
+				以指令\textbf{fitlm}即可取得模型，再透過MATLAB整理好的物件，將$\beta$也取得，					最後顯示圖形如圖\ref{fig:c1mdl}：
+				\begin{figure}[H]	
+		 			\centering	 			 	 
+   					\includegraphics[width=1\textwidth]{\imgdir c1mdl.jpg} 
+   					\caption{模擬資料之簡單迴歸分類器}   		
+   					\label{fig:c1mdl}   			 		 
+				\end{figure}
+				而為了進行比較，我們計算其錯誤率為0.0475，在400筆資料中，有19筆判斷錯誤，而接著					我們以加廣型分類器進行建模，程式如下：
+				\begin{center}\colorbox{slight}{
+					\begin{tabular}{p{0.9\textwidth}}
+						\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+						set(gca,'fontsize',30);\\
+						D = load('myData2.mat');\\
+						x=D.X;y=D.y;n=size(x,1);\\
+						figure,hold on;\\
+						gscatter(x(:,1),x(:,2),y,'br',"ox",10);\\
+						mdl=fitlm(x,y,'quadratic');\\
+						Ab = mdl.Coefficients.Estimate;\\
+						g=@(x1,x2) Ab(1)-0.5+Ab(2)*x1+Ab(3)*x2+Ab(4)*...\\
+ 					  	x1.*x2+Ab(5)*x1.\^2+Ab(6)*x2.\^2;\\
+						fimplicit(g,'LineWidth',3,'LineStyle',"--");\\
+						hold off;legend('hide');grid;\\	
+					\end{tabular}
+				}
+				\end{center}
+				而在此例，加廣型明顯配適出一條分類曲線，如圖\ref{fig:c1augmdl}：
+				\begin{figure}[H]	
+		 			\centering	 			 	 
+   					\includegraphics[width=1\textwidth]{\imgdir c1augmdl.jpg} 
+   					\caption{模擬資料之加廣型迴歸分類器}   		
+   					\label{fig:c1augmdl}   			 		 
+				\end{figure}	
+				而其錯誤筆數為18，錯誤率0.045，因此我們可以得知，以訓練資料集的正確率來說，加廣型					迴歸	的表現比較好，但兩者之間判斷錯誤僅差一筆，因此效率可能仍要討論，而圖							\ref{fig:c1twomdl}\ 彙整兩種圖形，可看出兩分類器在圖形表現上的差異。
+				\begin{figure}[H]	
+		 			\centering	 			 	 
+   					\includegraphics[width=1\textwidth]{\imgdir c1twomdl.jpg} 
+   					\caption{兩分類器表現差異}   		
+   					\label{fig:c1twomdl}   			 		 
+				\end{figure}
+			}
+			\item{\textbf{以圖\ref{fig:Data}\ (d)資料集為例：}
+				在圖\ref{fig:Data}(d)資料集中，能明先觀察出兩群散佈程度有明顯的差異，而透過盒形					圖觀察資料如圖\ref{fig:c2box}\ 可見$x_2$散佈明顯較廣，且有離群值存在，但離群值					不多，因此資料來源可能仍為正常：
+				\begin{figure}[H]	
+		 			\centering	 			 	 
+   					\includegraphics[width=1\textwidth]{\imgdir c2box.jpg} 
+   					\caption{圖\ref{fig:Data}\ (d)資料散佈情形}   		
+   					\label{fig:c2box}   			 		 
+				\end{figure}				
+				接著透過模型配適，並利用簡單迴歸分類，觀察分類器的成效，如圖\ref{fig:c2mdl}：
+				\begin{figure}[H]	
+		 			\centering	 			 	 
+   					\includegraphics[width=1\textwidth]{\imgdir c2mdl.jpg} 
+   					\caption{圖\ref{fig:Data}\ (d)資料集之簡單迴歸分類器}   		
+   					\label{fig:c2mdl}   			 		 
+				\end{figure}
+				而由程式運算結果，其在400筆資料中，有14筆錯誤資料，其中錯誤率為0.035，而程式碼如					下所示：
+				\begin{center}\colorbox{slight}{
+					\begin{tabular}{p{0.9\textwidth}}
+						\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+						set(gca,'fontsize',30);\\
+						D = load('myData1.mat');\\
+						x=D.X;y=D.y;\\						
+						n=size(x,1);\\
+						boxplot([x(:,1),x(:,2)]);\\
+						figure,hold on;\\
+						gscatter(x(:,1),x(:,2),y,'br',"ox",10);\\
+						mdl=fitlm(x,y);\\
+						b = mdl.Coefficients.Estimate;\\
+						f=@(x) (-b(2)/b(3))*x+(0.5-b(1))/b(3);\\
+						fplot(f,'LineWidth',3);\\
+						hold off;legend('hide');grid;\\
+						yHat = mdl.Fitted;\\
+						yHat(yHat<0.5)=0;yHat(yHat>0.5)=1;\\						
+						errorMdl = sum(abs(y-yHat))\\
+						errorMdl = sum(abs(y-yHat))/n\\
+					\end{tabular}
+				}
+				\end{center}
+				接著利用加廣型迴歸模型，實驗結果，錯誤筆數為12筆，錯誤率為0.03，而函數圖形如圖						\ref{fig:c2aug}
+				\begin{figure}[H]	
+		 			\centering	 			 	 
+   					\includegraphics[width=1\textwidth]{\imgdir c2aug.jpg} 
+   					\caption{圖\ref{fig:Data}\ (d)資料集之加廣型迴歸分類器}   		
+   					\label{fig:c2aug}   			 		 
+				\end{figure}
+				而在此例中，以訓練資料集的正確率來說，加廣型較簡單迴歸優異，其錯誤筆數少兩筆，因此					在此例中，以加廣型迴歸做分類可能較優異。
+			}		
+		\end{itemize}
+		最後，我們討論當資料超過兩群時，要如何以上述的迴歸線進行分類，我們也以簡單線性迴歸實作，如			圖\ref{fig:threemdl}：
+		\begin{figure}[H]	
+		 	\centering	 			 	 
+   			\includegraphics[width=1\textwidth]{\imgdir threemdl.jpg} 
+   			\caption{三群簡單迴歸分類器}   		
+   			\label{fig:threemdl}   			 		 
+		\end{figure}
+		其中，我們是以三次兩群分類繪圖，因此在程式中有三個模型，以便繪出三種不同的分割線，如下：
+		\begin{center}\colorbox{slight}{
+					\begin{tabular}{p{0.9\textwidth}}
+						\MJHmarker{\textbf{\color{darkblue}{MATLAB語法 :}}}\\		
+						D=load("myData3.mat");\\
+						x=D.X;y=D.y;\\						
+						figure,hold on;\\
+						gscatter(x(:,1),x(:,2),y,'rbg','xo \textless ',10)\\
+\\
+						mdl=fitlm(x(1:300,:),y(1:300,:));\\
+						b = mdl.Coefficients.Estimate;\\
+						f=@(x) (-b(2)/b(3))*x+(0.5-b(1))/b3);\\
+						fplot(f,[1.15 3],'LineWidth',3);\\
+\\
+						mdl2=fitlm(x(101:end,:),y(101:end,:));\\
+						b = mdl2.Coefficients.Estimate;\\
+						f=@(x) (-b(2)/b(3))*x+(1.5-b(1))/b(3);\\
+						fplot(f,[1.25 5],'LineWidth',3);\\
+\\
+						mdl3=fitlm([x(1:100,:);x(301:end,:)],														[y(1:100,:);y(301:end,:)]);\\
+						b = mdl3.Coefficients.Estimate;\\
+						f=@(x) (-b(2)/b(3))*x+(1-b(1))/b(3);\\
+						fplot(f,[-3 1.65],'LineWidth',3);\\
+\\
+						hold off;legend('hide');\\						
+						ylim([-5 12])grid\\						
+					\end{tabular}
+				}
+		\end{center}
+		其中，仔細觀察圖\ref{fig:threemdl}，圖中有部分區域屬於三條線之外，而若是新的資					料於此，可能透過此分類器無法有效判斷，因此我們嘗試以加廣型分類器，來實測是否有機會					解決此問題，而實測結果如圖\ref{fig:threeaug}：
+		\begin{figure}[H]	
+		 	\centering	 			 	 
+   			\includegraphics[width=1\textwidth]{\imgdir threeaug.jpg} 
+   			\caption{三群加廣型分類器}   		
+   			\label{fig:threeaug}   			 		 
+		\end{figure}
+		圖\ref{fig:threeaug}\ 大致和圖\ref{fig:threemdl}\ 差不多，也有三條分類線無法判斷之			處，因此可能仍需另找其他有效方式，解決此問題。
+	\section{結論}
+		在簡單線性迴歸分類器，以及加廣型分類器上，兩種方法對於解決兩群以上的分類問題時，成效都不盡			理想，但對於兩群來說，此二分類器的表現，無論是理論或是圖形呈現，都能達到高準確度，而同時也			能藉由分類來預測新資料的歸屬，其中最重要的除了程式設計上的邏輯能力，以及語法熟悉度外，更需			要掌握其中迴歸方程式的理論，以及參數的估計，兼具理論以及實作能力，展現統計與監督式學習，正			是本文所想探討的。
+%\end{document}
+
+
+
+
+
+
+
+
+

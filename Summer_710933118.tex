@@ -1,0 +1,495 @@
+%\input{../Jiang_Preamble}
+
+%\newtheorem{de}{{\MJH 定義}}[section]
+%\newtheorem{ex}{{\Cam Example}}
+
+%\title{淺談統計理論與實務}
+%\author{江柏學}
+%\date{\today}
+
+%\begin{document}
+%	\maketitle
+%	\fontsize{12}{22pt} \selectfont	
+	%\chapter{ \LaTeX{\MB 的數學符號與方程式}}
+\chapter{ \LaTeX{\MJH 操作手冊之統計與數學}}	
+	統計學是在資料分析的基礎上，研究測定、收集、整理、歸納和分析反映資料資料，以便給出正確訊息的科學。這一門學科自17世紀中葉產生並逐步發展起來，它廣泛地應用在各門學科，從自然科學、社會科學到人文學科，甚至被用於工商業及政府的情報決策。隨著巨量資料時代來臨，統計的面貌也逐漸改變，與資訊、計算等領域密切結合，是資料科學中的重要主軸之一。
+
+譬如自一組資料中，可以摘要並且描述這份資料的集中和離散情形，這個用法稱作為 \textbf{{\MJHmarker 描述統計學}}。另外，觀察者以資料的形態，建立出一個用以解釋其隨機性和不確定性的數學模型，以之來推論研究中的步驟及母體，這種用法被稱做 \textbf{\MJHmarker{推論統計學}}。這兩種用法都可以被稱作為\textbf{\MJHmarker{應用統計學}}。\textbf{\MJHmarker{數理統計學}}則是討論背後的理論基礎的學科。\footnote{資料來自 https://zh.wikipedia.org/wiki/\%E7\%BB\%9F\%E8\%AE\%A1\%E5\%AD\%A6}
+
+因此，對於資料的分析，描述，預測等等都是統計學中重要的學問，其中\textbf{\MJHmarker{集合與函數}}的觀點亦為統計基本理論，因此本文除了將介紹統計在實務上面的應用外，亦會介紹基礎集合與函數觀念，從這幾項重要的學門，帶出最原始的統計風貌，並且了解如何以統計解決各領域方面的事務。\\
+\bigskip
+	\section{集合 {\ESITC{Set thoery}}}
+	我們都知道幾乎所有的近代數學理論, 都建築在集合論 \emph{(set thoery)} 之上. 對於微積分統計學
+而言, 當然也不例外. 但若要以嚴格的公設法來討論它, 則需要很多時間. 為方便起見我們仍以數學家
+\underline {\Ari{Cantor}} 的直觀集合論為基礎。
+		\begin{enumerate}
+		\item {\textbf{集合 \emph{(set)}} 與\textbf{元素 \emph{(element)}}:
+元素 $x$ 屬於 $A$ 集合，記為 $x \in A$ ，否則記為 $x \notin A$ 。若集合 $A$ 滿足性質 P(x) 之元素所組成, 則記為 $A = \{x \mid P(x)\}$ 。		
+		}		
+		\item {\textbf{子集   \emph{(subset)}}:設 $A$, $B$ 為集合, 則		
+		$$A \subseteq B \Leftrightarrow (x \in A \Rightarrow x \in B)$$.
+		 }
+		 \item {\textbf{相等   \emph{(equal)}}:設 $A$, $B$ 為集合, 則	
+		 $$A=B \Leftrightarrow (x \in A \Leftrightarrow x \in B) \Leftrightarrow (A \subseteq B \wedge B \subseteq A)$$
+		 }
+		 
+		 \item {\textbf{空集合   \emph{ (empty set)}}:
+		 $$ \emptyset = \{x \mid x \neq x\}$$
+		 }
+		 \item {\textbf{聯集   \emph{ (union)}}:設 $A$ , $B$ , $A_1$ ,..., $A_n$ ,...皆為集合，則
+		 \begin{itemize}
+		 	\item $A \cup B = \{x \mid x \in A \vee x \in B \}$
+		 	\item $ \cup_{j=1}^{n} A_j = \{ x \mid \exists j \in \{ 1,2,...,n \}$,使得 $x \in A_j \}$
+		 	\item $\cup_{j=1}^{\infty} A_j = \{ x \mid \exists j \in \mathbb{N} $ ,使得 $x \in A_j \}$
+		 	%圖片
+		 \end{itemize}
+		 }
+		 \begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=0.6\textwidth]{\imgdir S1_union.jpg} 
+   			 \caption{聯集}   		
+   			 \label{set:union}   			 		 
+		 \end{figure}
+		 \item {\textbf{交集   \emph{ (intersection)}}:
+		 \begin{itemize}
+		 	\item $ A \cap B = \{ x \mid x \in A \wedge x \in B \}$
+		 	\item $ \cap_{j=1}^{n} A_j = \{ x \mid \forall j \in \{ 1,...,n \} , x \in A_j \}$
+		 	\item $ \cap_{j=1}^{\infty} A_j = \{ x \mid \forall j \in \mathbb{N} , x \in A_j \}$
+		 	\begin{figure}[H]
+		 		\centering	 
+   			 	\includegraphics[width=0.6\textwidth]{\imgdir S1_intersction.jpg} 
+   			 	\caption{交集}   		
+   			 	\label{set:intercstion}
+   			 \end{figure}
+		 \end{itemize}
+		 }
+		 \item {\textbf{差集   \emph{ (difference)}}:設 $A$, $B$ 為集合, 則	
+		 $$ A \backslash B = \{ x \mid x \in A \wedge x \notin B \}$$
+		 \begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=0.6\textwidth]{\imgdir S1_subtraction.jpg} 
+   			 \caption{差集}   		
+   			 \label{set:subtraction}   			 		 
+		 \end{figure}
+		 }
+		 \item {\textbf{冪集   \emph{ (power set)}}:
+		 $$ P(A)=\{ B \mid B \subseteq A \} $$
+		 }
+		 \item {\textbf{序對   \emph{ ((ordered pair)}}:設 x, y 為二元素, 令
+		 $$ (x,y) = \{\{ x \},\{ x,y\}\} $$
+		 由上述定義可以證得 : $( (x, y) = (a, b) \Leftrightarrow x = a, y = b )$.
+		 }
+		 \item {\textbf{積集合   \emph{ ((Cartesian product)}}:設 $A$, $B$ 為集合, 則
+		 $$ A \times B = \{ (x,y) \mid x \in A \wedge y \in B \} $$
+		 \begin{itemize}
+		 	\item 例如$ A=\{1,4\},B=\{2,3\} $,則$ A \times B = \{(1,2),(1,3),(4,2),(4,3) \} $
+		 	\item 例如$ A=[1,4],B=[2,3] $,則
+		 	$$ A \times B = \{ (x,y) \mid 1 \leq x \leq 4 , 2 \leq y \leq3\} $$		 	
+		 \end{itemize}
+		其乃由平面上 $(1, 2), (4, 2), (4, 3), (1, 3)$ 四點所圍之區域, 如下圖所示 :		
+		 	\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=0.7\textwidth]{\imgdir S1_product.jpg} 
+   			 \caption{乘集}   		
+   			 \label{set:product}   			 		 
+		 \end{figure}
+		 }
+		\end{enumerate}		
+	\bigskip	
+	\section{函數 {\ESITC{Function}}}
+	\begin{enumerate}
+		\item {\textbf{函數   \emph{ (function) }}:設 $A$, $B$ 為二非空集合,\\
+		\\
+		$f$ 為自$A$至$B$之一 \textbf {函數} 
+		$ \Leftrightarrow 				
+			\left\{
+			\begin{array}{l}			
+				f \subset A \times B \\ 
+          		\forall x \in A \, \exists ! y \in B \mbox{使得} (x,y) \in f
+			\end{array}		
+			\right.
+		$\\
+		\\
+		若 $(x, y) \in f$, 我們常以 $y = f(x)$ 表之.
+		( 註 : 關於函數之定義亦可界定為 : 『$A$ 中每一元素 $x$, 必存在 $B$ 中唯一元素 $y$ 與之			對應.』 但對應二字並非邏輯符號或已界定之名詞, 為了數學之完美, 故以上述方式界定 ).	
+		\begin{figure}[H]	
+		 	 \centering	 			 	 
+   			 \includegraphics[width=0.6\textwidth]{\imgdir S1_function.jpg} 
+   			 \caption{函數}   		
+   			 \label{set:function}   			 		 
+		 \end{figure}
+		\underline{\textbf{函數之記法}}		
+		\begin{itemize}
+			\item[$\clubsuit$] $ f \rightarrow B : f(x) = \cdots ; $
+			\item[$\clubsuit$] $ f \rightarrow B : x \rightarrow \cdots . $
+		\end{itemize}					
+		本文中, 通常以上述方式表示函數,但至目前為止, 仍有許多人偏愛以傳統較簡單方式表示, 如
+		\begin{itemize}
+			\item[$\clubsuit$] $ y=x^2 ;$
+			\item[$\clubsuit$] $ y=\frac{\sin x}{x} \, \forall x \neq 0 ; $
+			\item[$\clubsuit$] $ z=x^2-y^2 ;$
+		\end{itemize}
+		}
+		
+		\item {\textbf{定義域 \emph{(domain)}} 與\textbf{值域 \emph{(range)}}:上述定義中, 			集合 $A$ 稱為 $f$ 之定義域, 常寫為 $Df$ ;
+			而 $A$ 之元素 $x$ 稱為自變數或變數 \emph{(variable)}, 此時, $f(x)$ 稱為 $x$ 之				函數值 \emph{(value)},而所有函數值所成之集合稱為 $f$ 之值域, 常寫為 $Rf$ , (某些				學者將集合 $B$ 稱為對應域\emph{(co-domain)}).		
+		}
+		\item {\textbf{映像 \emph{(image)}} 與\textbf{像原 \emph{(inverse image)}}:設 $f 			: A \rightarrow B$ 為一函數, $S \subset A$, 則
+			$$ f(S) = \{f(x) \mid x \in S\} $$	
+			稱為 $S$ 之 $f$ \textbf{映像}.(因此, $f$ 之值域 $Rf$ 乃其定義域之$f$ 映像, 即 $Rf = f(Df 			)$).		
+			\begin{figure}[H]	
+		 	 	\centering	 			 	 
+   			 	\includegraphics[width=0.8\textwidth]{\imgdir S1_image.jpg} 
+   				 \caption{映像}   		
+   				 \label{set:image}   			 		 
+		 	\end{figure}
+		 若 $T \subset B$, 則
+		 $$ f^{−1}(T) =\{x \in A \mid f(x) \in T\} $$
+		 稱為 $T$ 之 $f$ \textbf{像原}. 顯然 $B$ 及 $Rf$ 之像原皆為定義域 $A$.
+		 	\begin{figure}[H]	
+		 	 	\centering	 			 	 
+   			 	\includegraphics[width=0.8\textwidth]{\imgdir S1_inverse.jpg} 
+   				 \caption{像原}   		
+   				 \label{set:inverse}   			 		 
+		 	\end{figure}
+		}
+		\item {\textbf{嵌射   \emph{ (injective or 1-1) }}:其本意為不相同之變數其值亦不同, 				更精確的說 :
+			$$ f : A \rightarrow B \mbox{為\textbf{嵌射}} \Leftrightarrow (\forall x_1, x_2 				\in A)(x_1 \neq x_2 \Rightarrow f(x_1) \neq f(x_2)). $$
+		}		
+		\item {\textbf{蓋射   \emph{ (surjective or onto) }}:對應域 $B$ 中之每一元素皆存在 			$A$ 中之元素與之對應, 更精確的說 :
+			$$ f:A\rightarrow B \mbox{為\textbf{蓋射}} \Leftrightarrow \left[ \forall y \in B , \exists x \in A \mbox{使得} y = f(x) \right] $$
+		}
+		\item {\textbf{對射   \emph{ (bijective or 1-1 onto)}}: 嵌射且蓋射之意.
+		}
+		\item {\textbf{函數相等   \emph{ (equality of two functions)}}: 我們稱二函數 $f$ 				與 $g$ 相等 (記為 $f = g$), 若其滿足以下二條件 :
+			\begin{enumerate}
+				\item $ D_f=D_g $
+				\item $ \forall x \in D_f , f(x)=g(x) $
+			\end{enumerate}
+			所謂二函數不相等係指上述定義之反面; 更明白地說 :
+			$$ f \neq g \Leftrightarrow \left[ Df \neq Dg \mbox{或} \exists x \in Df 				\mbox{使得} f(x) \neq g(x) \right]. 
+			$$
+		}
+		\item {\textbf{反函數   \emph{ (inverse function)}}: 設 $f$ 為一函數, 令 $f^{−1} 				= \{(y, x) \mid (x, y) \in f \}, $若 $f^{-1}$ 為一函數則稱 $f$ 為 \textbf{可				逆\emph{(invertible)}}, 並稱 $f^{−1}$ 為 $f$ 之\textbf{反函數}.
+			\begin{figure}[H]	
+		 	 	\centering	 			 	 
+   			 	\includegraphics[width=0.8\textwidth]{\imgdir S1_inverse_function.jpg} 
+   				 \caption{反函數}   		
+   				 \label{set:inverse_function}   			 		 
+		 	\end{figure}
+		 	由反函數之定義可知, $f^{−1}$ 與 $f$ 之圖形對稱於直線 $y = x$.
+		}
+	\end{enumerate}		
+	\bigskip	  
+	\section{統計方法之應用 {\ESITC{Application of statistical methods}}}
+	在統計方法的應用之中，從資料之蒐集開始即有自己的一套理論存在，例如\textbf{抽樣調查}，而在分析當中，更是可以簡單區分為\textbf{有母數\emph{(parametric statistics)}}與\textbf{無母數\emph{(nonparametric statistics)}}之方法運用，而本文之統計實務運用上，將著重於\textbf{抽樣調查設計}的簡單理論概述，比舉例說明，以清楚讓讀者了解。
+	
+	抽樣調查的目的是藉由母體中所選取樣本的資訊來推論母體，通常是以估計母體平均數(如每一家戶的平均收入)或母體比例(如支持某一特定議題之投票者的比例)的形式來進行，加上誤差界線範圍內的參數等，對於那些喜歡方法學甚於理論的人，我們會盡量用直覺性論述去證明估計量的使用。
+	
+	每一個從母體中選取的觀察值，都包含與母體參數相關的定量資訊。因為獲得資訊需要花錢，所以實驗者必須決定他應該購買多少資訊。資訊太少無法讓實驗者獲得好估計值，資訊過多則會導致金錢浪費。從樣本中獲得的資訊量，取決於抽樣項目數，與資料的變異程度。後者可以透過選取樣本的方法，也就是\textbf{抽樣調查設計\emph{(the design of the sample survey)}}來控制。在我們選取的每個元素都有精確測量值的情況下，調查設計與樣本大小會決定樣本中與母體參數有關的資訊量。而以下將會介紹幾種基本的抽樣設計。
+		\subsection{簡單隨機抽樣{\ESITC{Simple random sampling}}}:		
+			\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\begin{de}\label{de:SRS}
+						如果從大小為$N$的母體中選取大小為$n$的一組樣本，使得每一組大小為$n$的樣							本都有相同機會被選取，這種抽樣程序被稱為\textbf{簡單隨機抽樣									\emph{(Simple random sampling)}}。由此得到的樣本，被稱\textbf{簡單							隨機樣本\emph{(Simple random sample)}}。
+					\end{de}
+				\end{tabular}
+			}
+			\end{center}	
+			其中，我們採用樣本平均數 $\bar{y}$ 來估計$ \mu $。
+			$$ \bar{y} = \frac{\sum^{n}_{i=1} y_{i}}{n} $$
+			對於母體總和 $ \tau $ 的不偏估計式如下:
+			$$ \bar{\tau} = \sum^{n}_{i=1} \frac{y_i}{\pi_i} = \sum^{n}_{i=1} 						\frac{y_i}{n/N} =N \bar{y}$$
+			當然，單獨的$\bar{y}$數值不太能讓我們知道有關母體平均數的資訊，因此我們也要訂出一個估				計誤差界線，要完成這項工作，我們需要估計量的變異數，隊一組來自母體大小為$N$的簡單隨機				樣本而言:
+			$$ V(\bar{y}) = \frac{\sigma^2}{n} (\frac{N-n}{N-1}) $$
+			考慮樣本變異數
+			$$ s^2 = \frac{1}{n-1} \sum^{n}_{i=1} (y_i-\bar{y})^2 $$
+			我們可以證明:
+			$$ E(s^2)=\frac{N}{N-1}\sigma^2 $$
+			所以$ V(\bar{y}) $可以由樣本用下列估計式做不偏地估計
+			$$ \hat{V}(\bar{y}) = \left( 1 - \frac{n}{N} \right) \frac{s^2}{n} $$
+			而估計誤差界限:
+			$$ 2\sqrt{\hat{V}(\bar{y})}=2\sqrt{\left( 1-\frac{n}{N} \right)\frac{s^2}				{n}} $$
+			\rule{\textwidth}{0.2pt}
+			\begin{ex}\label{ex:SRS}
+				從母體$\{1,2,3,4\}$中選取大小$n=2$的樣本，下表顯示六組大小									$n=2$的可能樣本以及相關的樣本統計。				
+				\begin{table}[h]\label{table_srs}
+					\centering
+					\caption{例一之統計量}
+					\begin{tabular}{cccccc}
+					\hline
+					樣本 & 樣本機率 & $\bar{\tau}$ & $\bar{y}$ & $s^2$ & $\hat{V}({\bar{y}})$\\ \hline
+					$\{1,2\}$ & $\frac{1}{6}$ & 6 & 1.5 & 0.5 & 0.125 \\ \hline
+					$\{1,3\}$ & $\frac{1}{6}$ & 8 & 2.0 & 2.0 & 0.500 \\ \hline
+					$\{1,4\}$ & $\frac{1}{6}$ & 10 & 2.5 & 4.5 & 1.125 \\ \hline
+					$\{2,3\}$ & $\frac{1}{6}$ & 10 & 2.5 & 0.5 & 0.125 \\ \hline
+					$\{2,4\}$ & $\frac{1}{6}$ & 12 & 3.0 & 2.0 & 0.500 \\ \hline
+					$\{3,4\}$ & $\frac{1}{6}$ & 14 & 3.5 & 0.5 & 0.125 \\ \hline
+					\end{tabular}
+				\end{table}
+				
+				如果從母體中隨機抽出一個觀察值$y$，那麼$y$可以是四個可能數值中任意一個，且機率相					同，因此:
+				$$\mu = E(y) = \sum y p(y) = 1(\frac{1}{4})+2(\frac{1}{4})+\cdots 						+4(\frac{1}{4}) = 2.5$$
+				且\begin{equation}\notag
+				\begin{aligned} 					
+				 \sigma^2 = V(y) &= E(y-\mu)^2 = \sum(y-\bar{y})^2 p(y)\\ &= 
+				(1-2.5)^2(\frac{1}{4})+(2-2.5)^2(\frac{1}{4})+\cdots									+(4-2.5)^2(\frac{1}{4})\\&=\frac{5}{4}
+				\end{aligned}
+				\end{equation}
+				因為各個樣本平均可能出現的機率為$\frac{1}{6}$，所以我們可以計算$E(\bar{y})$與					$ V(\bar{y}) $。從期望值的定義:
+				$$ E(\bar{y})=\sum \bar{y} p(\bar{y})=1.5(\frac{1}{6})+2.0(\frac{1}						{6})+\cdots+3.5(\frac{1}{6})=2.50=\mu$$
+				且\begin{equation}\notag
+				\begin{aligned} 
+				 V(\bar{y})&=E(\bar{y}-\mu)^2 \\ &= \sum(\bar{y}-\mu)^2 p(y)\\ 							&=(1.5-2.5)^2(\frac{1}{6})+(2.0-2.5)^2(\frac{1}{6})+\cdots+(3.5-2.5)^2 				(\frac{1}{6})=\frac{5}{12}
+				\end{aligned}
+				\end{equation}
+				
+			\end{ex}
+			\rule{\textwidth}{0.2pt}			
+		\subsection{分層隨機抽樣{\ESITC{Stratified random sampling}}}:			
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\begin{de}\label{de:stratified}
+						\textbf{分層隨機樣本\emph{(Stratified random sample)}}是將母體元							素分成不重疊群體，稱為\textbf{層\emph{strata}}，然後再從每一層選取一							組簡單隨機樣本來構成樣本。
+					\end{de}
+				\end{tabular}
+			}
+		\end{center}		
+		
+		其中，令$\bar{y_i}$表示從第i層中選取之簡單隨機樣本的樣本平均數，$n_i$表示第i層的樣本數，			$\mu_i$表示第i層的母體平均數，以及$\tau_i$表示第i層的母體總和，那麼母體總和$\tau$就等於			$\tau_1+\cdots+\tau_n$。我們再每一層都有一組簡單隨機樣本，而以下用$\bar{y}_{st}$來表			示$\mu$的估計量，其中的下標st意指使用了分層隨機抽樣。\\		
+		母體平均數$\mu$的估計量:
+		$$ \bar{y}_{st}=\frac{1}{N} [ N_1\bar{y}_1+N_2\bar{y}_2+\cdots+N_L\bar{y}_L ] 			=\frac{1}{N}\sum^{L}_{i=1} N_i \bar{y}_i$$
+		$\bar{y}_{st}$的估計變異數:\begin{equation}\notag
+		\begin{aligned} 
+		 \hat{V}(\bar{y_{st}}) &= \frac{1}{N^2}[N^2_1\hat{V}(\bar{y_1})+N^2_2\hat{V}			(\bar{y_2})+\cdots+N^2_L\hat{V}(\bar{y_L})]\\
+		 &=\frac{1}{N^2}\left[ N^2_1 \left( 1-\frac{n_1}{N_1} \right) \left( 					\frac{s^2_1}{n_1} \right)+ \cdots +N^2_L \left( 1-\frac{n_L}{N_L} \right) 				\left( \frac{s^2_L}{n_L} \right) \right] \\
+		 &= \frac{1}{N^2} \sum^L_{i=1} N^2_i \left( 1-\frac{n_i}{N_i} \right) 					\left( \frac{s^2_i}{n_i} \right) 
+		 \end{aligned}
+		\end{equation}
+		\rule{\textwidth}{0.2pt}
+		\begin{ex}\label{ex:stratified}
+			假設廣告公司有足夠的時間與金錢訪問$n=40$個家戶，並決定從城鎮$A$選出一組大小為						$n_1=20$的隨機樣本，城鎮B選出一組$n_2=8$的隨機樣本，以及鄉村地區選出一組大小為					$n_3=12$的隨機樣本。選取簡單隨機樣本，並且進行訪問，下表呈現每周收看電視時數的測量結				果。			
+		\begin{longtable}{@{}ccc@{}}
+			\caption{每周收看電視的時數}
+			\label{table_TV}\\
+			\toprule
+			城鎮A& 城鎮B &鄉村\\
+			\midrule
+			\endfirsthead
+			\multicolumn{3}{l}{承接上頁}\\[2pt]
+			\toprule
+			城鎮A& 城鎮B &鄉村\\
+			\midrule
+			\endhead
+			\midrule
+			\multicolumn{3}{r}{續接下頁}
+			\endfoot
+			\endlastfoot
+			35&27&8\\
+			43&15&14\\
+			36&4&12\\
+			39&41&15\\
+			28&49&30\\
+			28&25&32\\
+			29&10&21\\
+			25&30&20\\
+			38&--~&34\\
+			27&--~&7\\
+			26&--~&11\\
+			32&--~&24\\
+			29&--~&--~\\
+			40&--~&--~\\
+			35&--~&--~\\
+			41&--~&--~\\
+			37&--~&--~\\
+			31&--~&--~\\
+			45&--~&--~\\
+			34&--~&--~\\
+			\end{longtable}
+		由表\ref{table_TV} 資料彙整後，可得以下統計量:
+		\begin{table}[H]
+		\centering
+		\caption{來自 表\ref{table_TV} 之資料彙整}
+			\begin{tabular}{cccccc}
+			\rowcolor[gray]{.9}
+			 &N&n&平均數&中位數&標準差\\ \hline
+			 城鎮A&155&20&33.90&34.50&5.95\\ \hline
+			 城鎮B&62&8&25.12&26.00&15.25\\ \hline
+			 鄉村&93&12&19.00&17.50&9.36\\ \hline			 
+			\end{tabular}
+		\end{table}
+		其中
+		\begin{equation}\begin{aligned}
+		\bar{y}_{st}&=\frac{1}{N} [N_1 \bar{y_1}+N_2 \bar{y_2}+\cdots+N_L \bar{y_L}]\\
+		&=\frac{1}{310}[155(33.90)+62(25.12)+93(19.00)] \\
+		&=27.7 \end{aligned}
+		\end{equation}
+		此為該郡所有家戶每周收看電視之平均時數的最佳估計值，而且，
+		\begin{equation}\begin{aligned}
+		\hat{V}(\bar{y_st})&=\frac{1}{N^2} \sum^{L}_{i=1} N^2_i \left( 1=\frac{n_i}				{N_i} \right)\left( \frac{s^2_i}{n_i} \right)\\
+		&= \frac{1}{310^2} \left[ \frac{(155^2)(0.871)(5.95)^2}{20}+ \frac{(62^2)				(0.871)(15.25)^2}{8}+ \frac{(93^2)(0.871)(9.36)^2}{12}  \right]\\
+		&=1.97
+		 \end{aligned}		 
+		\end{equation}
+		有著近似2-SD估計誤差界限的母體平均數的估計值為
+		$$ \bar{y}_st \pm 2\sqrt{\hat{V}(\bar{y}_st)} \mbox{或} 27.675 \pm 							2\sqrt{1.97} \mbox{或} 27.7 \pm 2.8 $$
+		因此，我們估計在該郡中，家戶收看電視的每周平均時數為27.7小時。在機率近似乎等於0.95之下，估			計誤差應該小於2.8小時。		
+		\end{ex}		
+		\rule{\textwidth}{0.2pt}
+		\subsection{集群抽樣{\ESITC{Cluster sampling}}}:		
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\begin{de}\label{de:cluster}
+						\textbf{集群樣本\emph{(Cluster sample)}}是每一個抽樣單位都是一組或							一集群元素的機率樣本。						
+					\end{de}
+				\end{tabular}
+			}
+			\end{center}			
+		
+		如果獲得列出所有母體元素的底冊非常昂貴，或如果獲得觀察值的費用隨母體元素之間的距離增加而提			高，集群抽樣就簡單隨機抽樣或是分層隨機抽樣花費少。		
+		
+		假設:
+		$N=$母體中的集群數\\
+		$n=$簡單隨機樣本中被選取的集群數\\
+		$m_i=$集群$i$中的元素個數，$i=1,2,\cdots,N$\\
+		$\bar{m} = \frac{1}{n}\sum^n_{i=1} m_i =$樣本的平均集群大小\\
+		$M=\sum^N_{i=1} m_{i} = $母體元素個數\\
+		$\bar{M} = \frac{M}{N} = $母體的平均集群大小\\
+		$y_i=$第$i$個集群中所有觀測值的總和\\
+		母體平均數$\mu$的估計量是樣本平均數$\bar{y}$，假定如下
+		$$ \bar{y} = \frac{\sum^n_{i=1} y_i}{\sum^n_{i=1} m_i} $$
+		且$\bar{y}$的估計變異數:
+		$$ \hat{V}(\bar{y})=\left( 1-\frac{n}{N} \right) \frac{s^2_r}{n\bar{M}^2}$$
+		其中
+		$$ s^2_r = \frac{\sum^n_{i=1}(y_i-\bar{y}m_i)^2}{n-1} $$
+		\rule{\textwidth}{0.2pt}
+		\begin{ex}\label{ex:cluster}
+			假設社會學家決定將某城鎮之地圖區塊是為一群集，且地圖有415個區塊，亦即此城鎮有415個集				群，而今日有足夠金錢與時間抽樣n=25個集群，並訪問各集群中的每一個家戶，蒐集之資料如下表				所示:
+			\begin{table}[h]
+			\centering
+			\caption{人均所得}
+				\begin{tabular}{ccc|ccc}
+				\hline
+				集群&居民數$m_i$&每群總所得$y_i$&集群&居民數$m_i$&每群總所得$y_i$ \\ \hline
+				1&8&96,000&14&10&49,000\\
+				2&12&121,000&15&10&53,000\\
+				3&4&42,000&16&10&50,000\\
+				4&5&65,000&17&10&32,000\\
+				5&6&52,000&18&10&22,000\\
+				6&6&40,000&19&10&45,000\\
+				7&7&75,000&20&10&37,000\\
+				8&5&65,000&21&10&51,000\\
+				9&8&45,000&22&10&30,000\\
+				10&3&50,000&23&10&39,000\\
+				11&2&85,000&24&10&47,000\\
+				12&6&43,000&25&10&41,000\\
+				13&5&54,000&--~&--~&--~\\
+				\hline				
+				\end{tabular}
+			\end{table}
+			在獲取樣本集群資訊後，即可獲得以下統計量:
+			\begin{table}[h]
+			\centering
+			\caption{樣本群集居民資訊統計量}
+				\begin{tabular}{ccccc}
+					\hline \rowcolor{blizzardblue}
+					&N&平均數&中位數&標準差\\ \hline \rowcolor{blanchedalmond}
+					居民&25&6.040&6.000&2.371\\ \rowcolor{blanchedalmond}
+					所得&25&53,160&49.000&21,784\\ \rowcolor{blanchedalmond}
+					$ y_i-\bar{y} m_i $&25&0&993&25,189\\ 
+					\hline
+				\end{tabular}
+			\end{table}
+			母體平均數$\mu$的最佳估計值計算如下:
+			$$ \bar{y} = \frac{\sum^n_{i=1} y_i}{\sum^n_{i=1} m_i} 
+			=\frac{\$1,329,000}{151} = \frac{\$53,160}{6.04}=\$8801 $$
+			因為$M$未知，所以$\bar{M}$必須用$\bar{m}$來估計，其中
+			$$\bar{m}=\frac{\sum^n_{i=1} m_i}{n} = \frac{151}{25} = 6.04$$
+			且已知$N=415$，所以
+			$$ \hat{V}(\bar{y})=\left( 1-\frac{n}{N} \right)\frac{s^2_r}{n\bar{M}^2}=				\left[ 1-\frac{25}{415} \right] \frac{(25,189)^2}{25(6.04)^2}=653,785 $$	
+			因此，附加估計誤差界限之$\mu$的估計值為
+			$$ \bar{y}\pm 2\sqrt{\hat{V}(\bar{y})}=8801\pm 2\sqrt{653,785}=8801\pm1617  			$$
+			人均所得的最佳估計值是\$8801，且在機率接近95\%之下，估計誤差應該小於\$1617，這個估計				誤差界限相當大，可藉由抽樣更多個集群來加以降低。
+		\end{ex}
+		\rule{\textwidth}{0.2pt}
+		\subsection{系統抽樣{\ESITC{Systematic sampling}}}:		 
+		\begin{center}\colorbox{slight}{
+				\begin{tabular}{p{0.9\textwidth}}
+					\begin{de}\label{de:cluster}
+						從底冊中最初的k個元素中隨機選取一個元素，從那之後每k個元素隨機選取一個元							素，這樣得到的樣本稱為具隨機起點的\textbf{k取1系統樣本\emph{(1-in-k 							systemetic sample)}}。											
+					\end{de}
+				\end{tabular}
+			}
+			\end{center}			
+		因下列理由，系統抽樣提供較簡單隨機抽樣有用的另一種選擇:
+		\begin{enumerate}
+			\item{系統抽樣在現場比較容易執行。也因此，與簡單隨機樣本或分層隨機樣本相比，較不會受					制於現場調查工作者的選擇偏誤，楊騏是當沒有好的底冊可使用時。}
+			\item{在母體元素的排列具特定的模式時，同樣的單位花費下，系統抽樣能提供的資訊比簡單隨					機抽樣更多}
+		\end{enumerate}
+		我們可以利用從系統樣本平均數$\bar{y}$估計母體平均數$\mu$。這個結果顯示如下:
+		母體平均數$\mu$的估計量
+		$$ \hat{\mu} = \bar{y}_{sy}=\frac{\sum^{n}_{i=1} y_i}{n} $$
+		其中下標sy表明我們使用的是系統抽樣\\
+		$\bar{y}_{sy}$的估計變異數:
+		$$ \hat{V}(\bar{y}_{sy})=\left( 1-\frac{n}{N} \right)\frac{s^2}{n} $$
+		
+		\begin{ex}\label{ex:systematic}
+			聯邦政府利用蒐集像員工人數和薪資等變數的年度資料，追蹤國內產業表現各項指標，顯示如下				表:
+			\begin{table}[H]\label{table:sys}
+			\centering			
+			\footnotesize			
+			\caption{製造業樣本的員工和薪資資料}			
+			\rotatebox[origin=c]{90}{
+				\begin{tabular}{cclccc}
+				\hline
+				樣本&SIC&描述&2000年員工人數(千)&2001年員工人數(千)&2002年員工人數(千)\\
+				\hline
+				1&204&穀物製造廠產品&122.4&122.2&34.9\\
+				2&212&雪茄菸&2.9&3.2&26.9\\
+				3&225&編織場&120.1&98.6&26.0\\
+				4&233&女性，小姐和青少年外衣&169.9&137.3&23.0\\
+				5&241&筏木業&78.2&73.6&29.8\\
+				6&252&辦公室家具&80.7&69.2&32.5\\
+				7&265&硬紙箱和硬紙盒&219.4&207.2&33.8\\
+				8&276&各式商業類型&42.0&36.5&33.5\\
+				9&284&肥皂，洗潔劑等打掃用品&156.0&149.2&37.8\\
+				10&299&石油與煤的各種產品&13.2&14.1&41.9\\
+				11&313&靴子和鞋子的切割材料和工具&1.1&0.8&26.1\\
+				12&322&玻璃與玻璃器皿，壓製或吹製&67.6&60.0&32.9\\
+				13&329&磨料，石綿以及各種類&74.0&67.1&34.4\\
+				14&339&各種主要金屬製品&26.8&25.4&35.7\\
+				15&347&塗層，雕版和相關服務&149.6&128.5&29.5\\
+				16&355&特殊產業機器&170.9&146.4&42.1\\
+				17&363&家庭電器&106.3&104.8&30.6\\
+				18&372&飛機和零件&466.6&450.5&49.5\\
+				19&382&實驗室儀器以及分析控制儀器&311.4&282.4&46.1\\
+				20&394&玩偶，玩具，遊戲運動用品&101.0&90.7&31.2\\
+				\hline \hline
+				& &n&平均數&中位數&標準誤\\ \hline
+				\multicolumn{2}{c}{2001年員工人數}&20&113.4&94.6&105.6\\ 
+				\multicolumn{2}{c}{員工減少人數}&20&10.61&7.25&10.29						
+				\end{tabular}
+			}			
+			\end{table}
+			
+			從上表中的統計摘要並利用簡單隨機抽樣的標準公式，隊平均員工人數的分析進行							如下:
+			$$\bar{y}_{sy}=113.4$$
+			$$ \hat{V}(\bar{y}_{sy})=\left( 1-\frac{20}{140} \right) \left( \frac{1}{20} \right) (105.6)^2$$
+			$$ 2\sqrt{\hat{V}(\bar{y}_{sy})}=2\sqrt{\left( 1-\frac{20}{140} \right)\left( \frac{1}{20} \right)} (105.6)=43.72$$
+			因此，每個產業的估計平均員工人數約為11.34萬人，加減大約4.4萬人。關於員工減少人數的類				似計算，產生了1.061萬人的估計平均數，估計誤差限度大約式0.426萬人。製造業在一年內減少				的員工數值算是相當的大，但是因為樣本很小且員工資料大變異量，所以估計誤差限度也很大。
+		\end{ex}
+		\section{結論 {\ESITC{Conclusion}}}
+		統計在生活中的不可或缺，是無法雄辯的事實之一，但現代人往往無法正確且有效的運用統計方面的知識，因此本文藉由基礎集合理論，當作概述統計的開端，雖無法讓讀者進一步參透機率論的偉大，卻也利用集合讓一般非統計專業人士了解如何最原始的定義資料歸屬。
+		
+		再者，本文只透過函數來表達統計內涵的最基本理論，函數只是統計的外衣，分佈與深層的推論才是最真實的統計，因此，隨著基礎集合論後，銜接函數，了解數學的理論，最後才介紹統計的用途，除了在\textbf{抽樣設計外}，\textbf{ANOVA}，\textbf{迴歸分析}都是統計在實務上最顯而易見的例子，也證明生活中統計的無所不在與其強大之處，而本文亦利用\XeLaTeX 呈現所表達的諸多內容，雖說難易度上較一般軟體艱困些許，但方便程度以及其自動排版的能力，決不亞於市面上常見軟體，結合\XeLaTeX 介紹數學與統計，即是本文最終的目的！
+		
+	
+%\end{document}
+
+
+
+
+
+
+
+

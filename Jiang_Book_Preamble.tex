@@ -1,0 +1,145 @@
+%--- BOOK 定義檔
+\documentclass[12pt, a4paper]{book}
+\setlength{\textwidth}{13cm} %設定書面文字寬度
+%--- 定義頁眉頁足 -------------------------------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter .\ #1}{}} %去除章編號前後的字
+\fancyhead[LE]{\thepage \;\; \XeLaTeX 一本書}%偶樹葉 thepage=頁碼 
+\fancyhead[RO]{\leftmark \;\; \thepage }%積樹葉 放右邊，fancyhead=頁眉
+%\rhead{\ctxff 數學與電腦}
+%\cfoot{\thepage}
+\renewcommand{\headrulewidth}{1pt} %頁眉下方的橫線
+
+
+%---------------------------------------------------------------------------------------
+\usepackage{amsthm}
+\theoremstyle{plain}
+\newtheorem{de}{Definition}[section] %definition獨立編號
+\newtheorem{thm}{{\MB 定理}}[section]%theorem 獨立編號，取中文名稱並給予不同字型
+\newtheorem{lemma}[thm]{Lemma}		%lemma 與 theorem 共用編號
+\newtheorem{ex}{{\E Example}}		%example 獨立編號，不編入小節數字，走流水號。也換個字型。
+\newtheorem{cor}{Corollary}[section]		%not used here
+\newtheorem{exercise}{EXERCISE}			%not used here
+\newtheorem{re}{\emph{Result}}[section]	%not used here
+\newtheorem{axiom}{AXIOM}				%not used here
+\renewcommand{\proofname}{證明}			%not used here
+\newcounter{quiz}						% start a simple and new counter
+\setcounter{quiz}{1}
+
+\usepackage{natbib}
+%自己=================================================================
+\usepackage{amsfonts} %用到 \mathbb{N}
+	
+%\usepackage[BoldFont, SlantFont]{xeCJK}		
+\usepackage{xltxtra}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{enumerate}
+\usepackage{graphicx, subfig, float, wrapfig}
+\usepackage{listings}
+\usepackage{color, xcolor}
+\usepackage{colortbl} 
+%\usepackage[left=1.5in,right=1in,top=1in,bottom=1in]{geometry}
+\usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
+\usepackage{array, booktabs}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage[parfill]{parskip}
+\usepackage[outercaption]{sidecap}
+\usepackage{amsmath, amssymb}
+
+\setCJKmainfont	[BoldFont=Microsoft YaHei]{新細明體}	
+\setmainfont{Times New Roman}			
+\setsansfont{Arial}	
+\setmonofont{Courier New}	
+
+
+\newfontfamily{\Cam}{Cambria}				
+\newfontfamily{\Ari}{Arial}
+\newfontfamily{\sCam}[Scale=0.9]{Cambria}
+\newfontfamily{\TNR}{Times New Roman}
+\newfontfamily{\sTNR}[Scale=0.8]{Times New Roman}
+\newfontfamily{\ESITC}{Imprint MT Shadow}
+%中文=================================================================
+\newCJKfontfamily{\MJH}{微軟正黑體}				% 適用在 Mac 與 Win
+\newCJKfontfamily{\sNSM}[Scale=0.8]{新細明體}	% 縮小版新細明體
+\newCJKfontfamily{\BK}{標楷體}                	% Windows下的標楷體
+\newCJKfontfamily{\MYH}{Microsoft YaHei}
+\newCJKfontfamily{\BKmarker}[Scale=1.1]{標楷體}
+\newCJKfontfamily{\MJHmarker}[Scale=1.1 ]{微軟正黑體}
+
+\XeTeXlinebreaklocale "zh"             		
+\XeTeXlinebreakskip = 0pt plus 1pt  
+
+\definecolor{slight}{gray}{0.9}				
+\definecolor{airforceblue}{rgb}{0.36, 0.54, 0.66} 
+\definecolor{arylideyellow}{rgb}{0.91, 0.84, 0.42}
+\definecolor{babyblue}{rgb}{0.54, 0.81, 0.94}
+\definecolor{cadmiumred}{rgb}{0.89, 0.0, 0.13}
+\definecolor{coolblack}{rgb}{0.0, 0.18, 0.39}
+\definecolor{beaublue}{rgb}{0.74, 0.83, 0.9}
+\definecolor{beige}{rgb}{0.96, 0.96, 0.86}
+\definecolor{bisque}{rgb}{1.0, 0.89, 0.77}
+\definecolor{gray(x11gray)}{rgb}{0.75, 0.75, 0.75}
+\definecolor{limegreen}{rgb}{0.2, 0.8, 0.2}
+\definecolor{splashedwhite}{rgb}{1.0, 0.99, 1.0}
+\definecolor{blanchedalmond}{rgb}{1.0, 0.92, 0.8}
+\definecolor{blizzardblue}{rgb}{0.67, 0.9, 0.93}
+\definecolor{darkblue}{rgb}{0.0, 0.0, 0.55}
+
+
+%----- 重新定義的指令 ---------------------------
+\newcommand{\cw}{\texttt{cw}\kern-.6pt\TeX}	% 這是 cwTex 的 logo 文字
+\newcommand{\imgdir}{images/}					% 設定圖檔的位置
+\renewcommand{\tablename}{表}					% 改變表格標號文字為中文的「表」（預設為 Table）
+\renewcommand{\figurename}{圖}				% 改變圖片標號文字為中文的「圖」（預設為 Figure）
+%\renewcommand{\figurename}{圖\hspace*{-.5mm}}
+%  for Long Report or Book
+\renewcommand{\contentsname}{{\MJH 目錄}}
+\renewcommand\listfigurename{{\MJH 圖目錄}}
+\renewcommand\listtablename{{\MJH 表目錄}}
+\renewcommand{\indexname}{{\MJH 索引}}
+\renewcommand{\bibname}{{\MJH 參考文獻}}
+
+\newcommand{\loflabel}{圖} % 圖目錄出現 圖 x.x 的「圖」字
+\newcommand{\lotlabel}{表}  % 表目錄出現 表 x.x 的「表」字
+\parindent=0pt
+\setcounter{tocdepth}{0}
+
+%--- 其他定義 ----------------------------------
+% 定義章節標題的字型、大小
+\titleformat{\chapter}[display]{\raggedright\LARGE\MJH}%raggedright 靠左靠右
+ {\MJH 第\ \thechapter\ 章}{0.2cm}{}
+%\titleformat{\chapter}[hang]{\centering\LARGE\sf}{\MB 第~\thesection~章}{0.2cm}{}%控制章的字體
+%\titleformat{\section}[hang]{\Large\sf}{\MB 第~\thesection~節}{0.2cm}{}%控制章的字體
+%\titleformat{\subsection}[hang]{\centering\Large\sf}{\MB 第~\thesubsection~節}{0.2cm}{}%控制節的字體
+\titleformat*{\section}{\normalfont\Large\bfseries\MJH}
+\titleformat*{\subsection}{\normalfont\large\bfseries\MJH}
+\titleformat*{\subsubsection}{\normalfont\large\bfseries\MJH}%這裡有加
+
+
+
+%--------------------------------------------------------------------------------------------------------------------------------------------
+% 映出程式碼 \begin{lstlisting}
+\lstset
+{	language=[LaTeX]TeX,
+    breaklines=true,
+    %basicstyle=\tt\scriptsize,
+    basicstyle=\tt\normalsize,
+    keywordstyle=\color{blue},
+    identifierstyle=\color{black},
+    commentstyle=\color{limegreen}\itshape,
+    stringstyle=\rmfamily,
+    showstringspaces=false,
+    %backgroundcolor=\color{splashedwhite},
+    backgroundcolor=\color{slight},
+    frame=single,							%default frame=none 
+    rulecolor=\color{gray(x11gray)},
+    framerule=0.4pt,						%expand outward 
+    framesep=3pt,							%expand outward
+    xleftmargin=3.4pt,						%to make the frame fits in the text area. 
+    xrightmargin=3.4pt,						%to make the frame fits in the text area. 
+    tabsize=2								%default :8 only influence the lstlisting and lstinline.
+}

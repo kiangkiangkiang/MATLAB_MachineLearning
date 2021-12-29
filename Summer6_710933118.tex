@@ -1,0 +1,189 @@
+%\input{../Jiang_Preamble}
+%\title{\MJHmarker 監督式學習 \\ \Large{\textbf{類神經網路}}}
+%\author{{\MJH 江柏學}}
+%\date{\today}  
+%\begin{document}
+%	\maketitle
+%	\fontsize{12}{22pt}\selectfont
+\chapter{\MJH 監督式學習之類神經網路}
+	類神經網路，又稱人工神經網路(Artificial Neural Network，簡稱ANN)，在機器學習和認知科學領			域，是一種模仿生物神經網路（動物的中樞神經系統，特別是大腦）的結構和功能的數學模型或計算模型，用		於對函式進行估計或近似。而此概念也能夠透過各種程式語言實現，例如MATLAB、PYTHON，但在實作類神經		網路之前，必須先探討其中之理論，以及運作方式，之後方能進行實務上之運用。
+	\section{類神經網路(ANN)}	
+		一般神經網路的階層上，包含輸入層、隱藏層、輸出層，而中間的隱藏層可以有一層以上。其中，兩層			（含）以上隱藏層的神經網路，通常會被泛稱為深度神經網路（Deep Neural Network，DNN），如			圖\ref{fig:ann_concept}\ 所示。\footnote{資料來源：https://medium.com/marketingdatascience/\%E5\%BF\%AB\%E9\%80\%9F\%E5\%8F\%8D\%E6\%87\%89\%E6\%A9\%9F\%E5\%88\%B6-\%E9\%A1\%9E\%E7\%A5\%9E\%E7\%B6\%93\%E7\%B6\%B2\%E8\%B7\%AF-a3bbdee4a6f6}
+		\begin{figure}[H]	
+			\centering	 			 	 
+   			\includegraphics[width=0.6\textwidth]{\imgdir ann_concept.jpg} 
+   			\caption{類神經網路之概念圖}
+   			\label{fig:ann_concept}   			 		 
+		\end{figure}
+		假設輸入層有$p$個變數，$x_1,x_2,\cdots,x_p$，輸出層有$r$個變數，$y_1,y_2,\cdots,y_r			$類神經網路的概念就是討論輸入層之變數$x$與輸出層之變數$y$之間的非線性函數關係，如式				(\ref{eq:y_fx})：
+		\\
+		\begin{equation}\label{eq:y_fx}
+ 				y_k = f_k(x_1,x_2,x_3,\cdots ,x_p)\\
+ 		\end{equation}
+		\\
+		由式(\ref{eq:y_fx})\ 可看出，類神經網路認為每項$y$都可以由$x_1,x_2,\cdots,x_p$共同反			應而得，而其中之反應，也是隱藏層內部的非線性函數轉換，換言之，將$x_1,x_2,\cdots,x_p$經由			隱藏層內之函數做非線性組合，便可以得到預測結果$y$，而圖\ref{fig:ann_concept}\ 中，包含			兩個隱藏層，可見其中輸入值經由兩種不同函數作用，方能得到輸出值$y$。
+		\\
+		\\
+		然而，在輸入值進入隱藏層，以及隱藏層準備做輸出之間，還有一項控制因素，權重(weight)，考量到			一項輸出值$y$是由$x_1,x_2,\cdots,x_p$共同作用而來，但並不能確保每項$x$對於$y$都有相同			的影響力，因此將每個輸入值$x$做權重調整$w$後才做函數轉換，舉例來說，若要做出一項動作($y				$)，是透過數種神經元$x$共同觸發而得，但並不一定每條神經元在傳導(接觸)的效用相同，可能有的			神經元觸發效果大，而有的神經元小，因此才需要權重作調整，如圖\ref{fig:weight}\ 所示。\footnote{圖片來源；http://www.cc.ntu.edu.tw/chinese/epaper/0038/20160920\_ 3805.html}
+		\begin{figure}[H]	
+			\centering	 			 	 
+   			\includegraphics[width=0.5\textwidth]{\imgdir weight.jpg} 
+   			\caption{權重調整輸入值}
+   			\label{fig:weight}   			 		 
+		\end{figure}
+		再者，經由函數轉換後的非線性組合，將再加上殘差值(bias)後再傳給下一個神經元，如此便完成了該			節點的輸出，而此節點的輸出，即為下個神經元之輸入值，如此一層一層傳導，直到最後的輸出層，便			產生預測結果，如此方式在學術上，稱為「前向傳播法（Forward-Propagation）」。
+		\\
+		\\		
+		最後，透過前向傳播法，我們得到了預測結果，便可以透過此預測結果和真實值做相減再平方最後取偏			偏微分，如式(\ref{eq:lsd})，透過此類似最小平方法之概念，便可找出能讓殘差最小之權重。
+		\begin{equation}\label{eq:lsd}
+ 				\nabla \sum(y_i - \hat{y_i})^2
+ 		\end{equation}
+		因此，類神經網路可以透過大量的資料集訓練，並且經由複雜的數學計算預測最終結果，而其中訓練資			料便是能影響最後預測結果的關鍵之一，若是訓練資料集具有代表性，且足夠多，最終便會產生較小的			誤差，反之，若是訓練資料瑕疵較多，最終測試結果便會差強人意。
+		\bigskip
+	\section{ANN實務應用——機器手臂}
+		而此類神經模型，在實務也被廣泛應用，例如商業分析、金融預測、圖像辨識以及機器人，都是當前常			會出現的議題，而本文也將淺談機器人中的機器手臂運動，作為類神經之應用，並且將透過MATLAB作為			實作工具，了解其中語法，以及利用圖像理解。
+		\\		
+		假設在平面空間中，有項手臂運動，其運動範圍之控制因素由手臂角度($\theta_1$)和關節角度($				\theta_2$)所控制，而若有項物體在($x_1,x_2$)點上，手臂要如何改變角度才能觸碰到此物體，也			就是說，假設給定($x_1,x_2$)，希望求($\theta_1,\theta_2$)為何，而此問題可以更簡單想成式			(\ref{eq:theta})：
+		\begin{equation} 
+            \begin{split} \label{eq:theta}
+                \theta_1 = f_1(x_1,x_2)\\
+                \theta_2 = f_2(x_1,x_2)
+            \end{split}
+        \end{equation}
+        式(\ref{eq:theta})中，可看出在已知($x_1,x_2$)的情況下，透過某種函數轉換，能得出最終結果
+        $theta$，而此問題模式，正如同類神經網路所討論，透過函數轉換輸入值，並且經由權重，殘差所調			整後，得出預測值，而要如何判斷此模型好壞，或是如何增加預測正確度，便是從大量資料之訓練學習			而得，因此回到主題，在進行建模之前，需要先有一組訓練資料集，而由上述提到，訓練資料集的多寡			以及是否具有代表性，有可能影響最終預測結果，因此我們在機器手臂可能的運動範圍內，討論以下幾			種模擬資料，來討論訓練資料集之優劣：
+        \\
+        \begin{enumerate}        	
+        	\item {\textbf{樣本數N=100}\\
+        		根據上述問題，我們先假設機器手臂能活動的範圍為圖\ref{fig:area}\ 之灰色區塊：
+        		\begin{figure}[H]	
+					\centering	 			 	 
+   					\includegraphics[width=0.5\textwidth]{\imgdir area.jpg} 
+   					\caption{機器手臂運動範圍(灰色區域)}
+   					\label{fig:area}   			 		 
+				\end{figure}
+        		那模擬資料之抽樣，亦會在此黑色區塊內做抽樣，而若是以樣本數為100做抽樣，則會如圖					\ref{fig:sample100}\ 所示：
+        		\begin{figure}[H]	
+					\centering	 			 	 
+   					\includegraphics[width=1\textwidth]{\imgdir sample100.jpg} 
+   					\caption{機器手臂之訓練資料集(N=100)}
+   					\label{fig:sample100}   			 		 
+				\end{figure}
+				可見資料散佈程度較稀疏，仍有許多運動空間尚未訓練，理論上來說可能無法有良好的預測，					然而，我們仍此資料作為實驗，來觀察最終結果是否符合理論。        	
+        	}
+        	\item {\textbf{樣本數N=400}\\
+        	\\
+        		而在對照組的部分，我們以樣本數為400來做測試，由圖\ref{fig:sample400}\ 可見，樣					本數在400時，已經能涵蓋大部分之運動範圍，但在外圍的部分，可能仍有訓練較為不足之					處，因此可能在預測時外圍之誤差會較高，同樣我們列為本次實驗之資料集，以實作來觀察結					果是否和預期一樣，也和另一組資料做比較，討論樣本數多寡時所造成的誤差。
+        		\begin{figure}[H]	
+					\centering	 			 	 
+   					\includegraphics[width=1\textwidth]{\imgdir sample400.jpg} 
+   					\caption{機器手臂之訓練資料集(N=400)}
+   					\label{fig:sample400}   			 		 
+				\end{figure}
+        	}
+        \end{enumerate}        
+        在正式進入實驗之前，必須先設定類神經網路中隱藏層內的層數(q)，若層數愈高，其中非線性程度也愈			高，我們在此透過程式來測試不同層數最後的預測成效，而可以先觀察圖\ref{fig:arms_real}\ ，			由於目前要進行為監督式學習，因此在學習前須要先具備已知資料($x_1,x_2,\theta_1 ,					\theta_2$)，而透過方程式轉換，我們將模擬資料之($x_1,x_2$)轉換為目標變數($\theta_1,\				theta_2$)，如此便有真實值可做監督式學習之建模。
+        \\
+        \\
+        接著再透過MATLAB內建之類神經學習器("Neural Net Fitting")進行建模實驗，而在本次實驗中，			我們除了將測試兩種不同數量之資料集以外，同時測試當隱藏層為10至20時，正確率會有何變化。        
+        
+       \begin{figure}[H]	
+			\centering	 			 	 
+   			\includegraphics[width=1\textwidth]{\imgdir arms_real.jpg} 
+   			\caption{目標變數之真實值資料}
+   			\label{fig:arms_real}   			 		 
+		\end{figure}				
+        
+        而結果如表\ref{table:armsResult}\ 所示：
+        \begin{table}[h]				
+			\caption{不同隱藏層之performance(N=100)}\label{table:armsResult}
+			\centering
+			\extrarowheight=8pt
+			\begin{tabular}{llllll} 					
+				\hline
+				L=10\ &L=12 \ &L=14 \ &L=16 \ &L=18 \ &L=20\\ \hline	
+				0.0021\ & 0.0028\ & 0.0017\ & 0.0017\ & 0.0013\ & 0.0028\\ \hline	
+			\end{tabular}
+		\end{table}
+		由表\ref{table:armsResult}\ 可看出L=12與20之performance最高，而L=18最低，當隱藏層數			不同時，每個模型表現亦會有差距，而接著我們測試當n=400時，各個模型之表現，結果如表					\ref{table:armsResult2}：
+		\begin{table}[H]				
+			\caption{不同隱藏層之performance(N=400)}\label{table:armsResult2}
+			\centering
+			\extrarowheight=8pt
+			\begin{tabular}{llllll} 					
+				\hline
+				L=10\ &L=12 \ &L=14 \ &L=16 \ &L=18 \ &L=20\\ \hline	
+				0.0010\ & 0.0011\ & 0.0015\ & 0.0011\ & 0.0014\ & 0.0011\\ \hline	
+			\end{tabular}
+		\end{table}
+		表\ref{table:armsResult2}\ 可見當樣本數大時，大部分performance都下降，可見當樣本數愈			大時，誤差愈小，估計愈準確，而performance最小則是發生在L=10處。
+		\\
+		\\
+		而透過此機器手臂之實驗，我們可以知道樣本數對於預測之重要性，而此例是將資料透過類似系統式抽			樣的方式，每隔一段半徑及一個角度抽取一個樣本，如此抽樣也是希望能夠不遺漏所有母體內之資料，			但倘若以雖機抽樣的方式，均勻分佈在母體上，可能也會有較好的成效。
+        
+	\section{ANN實務應用——分類器}
+		類神經網路亦可以用在分類上，例如已知$x_1,x_2$，預測$y$的類別，而在此透過既有資料"Demo"來			做實作ANN之分類，同樣我們先觀察資料集基本分佈狀況，如圖\ref{fig:demo}：
+		\begin{figure}[H]	
+			\centering	 			 	 
+   			\includegraphics[width=0.8\textwidth]{\imgdir demo.jpg} 
+   			\caption{模擬資料集之散佈圖}
+   			\label{fig:demo}   			 		 
+		\end{figure}
+		而透過MATLAB中的"Neural Net Pattern Recognition"便可以直接預測結果，如圖						\ref{fig:demoConfusion}：
+		\begin{figure}[H]	
+			\centering	 			 	 
+   			\includegraphics[width=0.6\textwidth]{\imgdir demoConfusion.jpg} 
+   			\caption{confusion matrix}
+   			\label{fig:demoConfusion}   			 		 
+		\end{figure}
+		由圖\ref{fig:demoConfusion}\ 可看出，訓練正確率為93.6\%，而測試正確率為93.3\%，在分類			上已有不錯表現，再者，我們透過不同的隱藏層，觀察資料正確率變化，如表\ref{table:c2Err}：
+		\begin{table}[H]				
+			\caption{不同隱藏層之錯誤率以兩群為例}\label{table:c2Err}
+			\centering
+			\extrarowheight=8pt
+			\begin{tabular}{llllll} 					
+				\hline
+				L=10\ &L=12 \ &L=14 \ &L=16 \ &L=18 \ &L=20\\ \hline	
+				0.065\ & 0.125\ & 0.060\ & 0.070\ & 0.070\ & 0.060\\ \hline	
+			\end{tabular}
+		\end{table}
+		表\ref{table:c2Err}\ 則顯示當隱藏層愈多時，錯誤率表現不一定愈低，在L=20與L=14有同樣的表			現，而在此例中，L=12反而有最高之錯誤率存在。而除了兩群分類，本文亦討論在三群時ANN之表現如			何。
+		\\
+		\\
+		在三類分群上，我們用相同的方式進行分類，而其中Confusion Matrix如圖\ref{fig:c3Confu}：
+		\begin{figure}[H]	
+			\centering	 			 	 
+   			\includegraphics[width=0.7\textwidth]{\imgdir c3Confu.jpg} 
+   			\caption{confusion matrix (三群)}
+   			\label{fig:c3Confu}   			 		 
+		\end{figure}
+		由圖\ref{fig:c3Confu}\ 可看出在三群分類上，訓練正確率高達96\%，而測試正確率也有95\%的高			正確率，可見ANN在三群分類上亦有相當成效，雖然無法像LDA，QDA等等擁有線段繪圖，以輔佐分類理			解，但ANN卻也帶給分類之高效益，最後，我們同樣測試不同隱藏層之表現，如表							\ref{table:c3Err}：
+		\begin{table}[h]				
+			\caption{不同隱藏層之錯誤率以三群為例}\label{table:c3Err}
+			\centering
+			\extrarowheight=8pt
+			\begin{tabular}{llllll} 					
+				\hline
+				L=10\ &L=12 \ &L=14 \ &L=16 \ &L=18 \ &L=20\\ \hline	
+				0.0387\ & 0.0325\ & 0.0413\ & 0.0413\ & 0.0437\ & 0.0450\\ \hline	
+			\end{tabular}
+		\end{table}
+		表\ref{table:c3Err}\ 可見隨著隱藏層愈多，錯誤率愈高，由於隱藏層愈多會導致非線性成分愈				高，因此就此例而言，有可能在分類上不需要太高之非線性函數，因此在隱藏層數為12時就已經達到高			水準的正確率，而由此二例我們都可以觀察的出來，不同的隱藏層導致不同的錯誤率存在，而隱藏層的			選擇也是ANN中需要考量的重點之一。
+	\section{結論}
+		在本文中，僅是粗淺的談論類神經網路，若是在數學上討論，會包含更多函數存在，而當隱藏層愈多，			愈接近深度學習，其中變化也愈高，而本文透過簡單的機器手臂預測點，以及分類來說明ANN之用途，並			且討論不同層數之錯誤率成效，而由實驗也可知，樣本數若是無法大致涵蓋母體，將會導致正確率下				降，因此樣本數的多寡以及樣本數分佈情形，對於最終預測結果相當重要，且隱藏層數也須經由測試得			知效果。
+%\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

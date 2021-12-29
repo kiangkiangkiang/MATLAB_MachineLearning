@@ -1,0 +1,193 @@
+\chapter{ \MJH MATLAB分類方法總結}
+本文歸納了多種不同的分類模型，其中在分類成效上各有優缺，並在理論觀點上也各不相同，有的基於分配假設下建立分類器，有的則是建立在模型假設下，判斷機率高低，也有的分類模型僅在直觀的基礎架構下，做出類別的預測，而本章主要總合所有分類器，一併討論其中優劣。
+\section{資料集建立}
+在比較所有模型之前，透過MATLAB先建立不同種類的資料集，而在此分別探討3種不同的資料集之型態，並且最後透過以下3種不同資料集，進行各個模型的測試，比較優劣。
+	\begin{enumerate}
+	\item{\textbf{資料集一 常態分配且變異數相同}\\
+	資料集一中，我們建立了常態分配的資料，並且令其變異數矩陣皆相同，最後透過散佈圖顯示如圖\ref{fig:dataset1_scatter}；
+	\begin{figure}[H]	
+		\centering	 			 	 
+   		\includegraphics[width=1\textwidth]{\imgdir dataset1_scatter.jpg} 
+   		\caption{常態分配且變異數相同之資料集}
+   		\label{fig:dataset1_scatter}   			 		 
+	\end{figure}
+	資料集一，利用最常見之常態分配建立資料，並且作最單純的變異數矩陣相同，測試模型最後的效能如何，觀察是否在假設常態分配下的分類器，會有較優異的表現，或是假設變異數矩陣相同的模型，能展現低誤差。	
+\\	
+	其中在模擬資料集一之建立下，令$\mu_1 = (3,2),\mu_2 =(4,6)$且變異數矩陣如式(\ref{eq:dataset1_sigma})：
+	\begin{equation} \label{eq:dataset1_sigma}
+	\sum = \left[
+            \begin{array}{cc}
+                1 & 0.2 \\
+                0.2 & 1    
+            \end{array} \right]
+    \end{equation}
+    可見兩群資料皆有共變異存在，而第二群資料之平均數較第一群高。
+	}
+	
+	\item{\textbf{資料集二 常態分配但變異數不同}\\
+接著，在資料集二當中，主要測試在常態分配下，若是變異數矩陣不同，各個分類器會有何表現，因此我們先令$\mu_1 = (3,2),\mu_2 =(4,6)$和資料集一相同，保持不變，但變異數矩陣改成式(\ref{eq:dataset2_sigma})：
+	\begin{equation} 
+	\begin{split}\label{eq:dataset2_sigma}
+	\sum_{1} = \left[
+            \begin{array}{cc}
+                1 & 0.1 \\
+                0.1 & 1    
+            \end{array} \right]\\ 
+     \sum_{2} = \left[
+            \begin{array}{cc}
+                8 & 0.4 \\
+                0.4 & 3    
+            \end{array} \right] 
+    \end{split}  
+    \end{equation}
+	可由式(\ref{eq:dataset2_sigma})\ 看出兩共變異數矩陣有所差別，第一組資料之變異程度較小，而第二組資料相較變異程度較大，且對於$x_1$有較高變異，因此散佈圖可能也會呈現較廣的分佈，如圖\ref{fig:dataset2_scatter}；
+\begin{figure}[H]	
+		\centering	 			 	 
+   		\includegraphics[width=1\textwidth]{\imgdir dataset2_scatter.jpg} 
+   		\caption{常態分配但變異數不同之資料集}
+   		\label{fig:dataset2_scatter}   			 		 
+	\end{figure}	
+	圖\ref{fig:dataset2_scatter}\ 則呈現資料一較為密集，而資料而如上述所分析，分佈較廣，並且兩資料重疊部分較高，而此資料集主要希望測試是否共變異數矩陣不同時，加廣型迴歸方式能有較好的表現。
+	}
+	
+	\item{\textbf{資料集三 非常態分配}\\
+	最後，在資料集三中，我們討論到當兩資料來自不同分配，且都不是常態分配時，模型的表現如何，而在此令第一組資料來自卡方分配，其中透過標準常態分配之平方轉換，第二組資料來自伽馬分配，程式碼如下所式：
+	
+	\begin{lstlisting}
+Ntrain=1000;Ntest=1000;
+n1=Ntrain+Ntest;n2=n1;n=n1+n2;
+mu1=[0 0];
+sigma=[1 0;0 1];
+A=mvnrnd(mu1,sigma,n1);
+B=gamrnd(4,1.5,[2000 2]);
+A=A.^2;
+x=[A;B];y=[zeros(n1,1);ones(n2,1)];
+gscatter(x(:,1),x(:,2),y,'br','ox');
+xlim([0 20]);ylim([0 20]);
+index = randperm(n);
+D.test.x=x(index(1:Ntest),:); 
+D.test.labels=y(index(1:Ntest),:);
+D.train.x=x(index(Ntest+1:end),:); 
+D.train.labels=y(index(Ntest+1:end),:);	
+	\end{lstlisting}
+	令第一組資料集為卡方分配，且自由度為一，第二組資料集為伽馬分配，且參數$\alpha,\beta$分別為$(4,1.5)$，最後透過訓練資料集繪製圖形，如圖\ref{fig:dataset3_scatter}：
+	\begin{figure}[H]	
+		\centering	 			 	 
+   		\includegraphics[width=1\textwidth]{\imgdir dataset3_scatter.jpg} 
+   		\caption{非常態分配之資料集}
+   		\label{fig:dataset3_scatter}   			 		 
+	\end{figure}	
+	圖\ref{fig:dataset3_scatter}\ 可看出卡方分配散落在座標軸附近，而伽馬分配則是分佈較廣，但兩者仍有較明顯之分類線存在，以此資料集，測試是否建立在常態分配之假設下的分類器，會有較高的錯誤率。
+	}
+	\end{enumerate}
+	
+\section{模型測試}		
+先前對於分類，預測之模型，總共包含以下幾種，REG、REG*、LDA、QDA、KNN、ANN，其中KNN又可由附近K個值做參數的變動，因此由KNN又可分出KNN(10)，KNN(20)，總共有7種分類器，而ANN則是以隱含層數為10進行測試比較，以下將分別由三種資料集，進行各個模型之比較：
+\begin{enumerate}
+\item{\textbf{資料集一：}\\
+	資料集一我們了解資料分佈皆為常態，且變異數矩陣相同，以肉眼觀察可能能用直線做分類，因此REG與LDA可能會有較高的表現，透過迴圈，重複100次實驗後取平均值之結果如表\ref{tab:dataset1_result}：
+	\begin{table}[H]				
+		\caption{所有分類器比較\_ 以資料集一為例}\label{tab:dataset1_result}
+		\centering
+		\extrarowheight=10pt
+		\begin{tabular}{lrrrrrrr} 					
+		\hline
+正確率   &REG &REG*    &LDA     &QDA     &KNN(10) &KNN(20) &ANN \\ \hline 
+訓練& 97.43\% &97.48\% &97.43\% &97.42\% &97.44\% &97.41\% &95.73\%   \\ 	
+測試& 98.24\% &98.14\% &98.24\% &98.23\% &98.19\% &98.30\% &92.33\%   \\ 		
+		\hline					
+		\end{tabular}
+	\end{table}
+由表\ref{tab:dataset1_result}\ 可見，訓練正確率最高者為加廣型迴歸，而測試正確率最高則是KNN(20)，而其中LDA與REG表現為次高者，可能由於資料集一中，既符合常態，也服從共變異數一致之假設，因此有較好的表現，而ANN則是處於墊底狀態，由於ANN較屬於高度非線性模型，因此在分類線類似直線的情形下，ANN成效可能較差，由圖\ref{fig:dataset1_result}\ 更可清楚觀察出差異所在。
+\begin{figure}[H]	
+		\centering	 			 	 
+   		\includegraphics[width=1\textwidth]{\imgdir dataset1_result.jpg} 
+   		\caption{所有模型正確率 以資料集一為例}
+   		\label{fig:dataset1_result}   			 		 
+	\end{figure}
+	圖\ref{fig:dataset1_result}\ 可見ANN之正確率相較於其他模型下非常低，可見高度非線性模型並不適用於線性分類上，至於其他模型之正確率則是相去不遠。
+}
+%接著寫dataset2 或是要把ANN除掉的圖放上去
+\item{\textbf{資料集二：}\\
+接著，我們以資料集二做實作，資料集二雖也屬於常態，卻是不同共變異數矩陣之情形，同樣以重複100次做實驗，而得到之結果如表\ref{tab:dataset2_result}：
+\begin{table}[H]				
+		\caption{所有分類器比較\_ 以資料集一為例}\label{tab:dataset2_result}
+		\centering
+		\extrarowheight=10pt
+		\begin{tabular}{lrrrrrrr} 					
+		\hline
+正確率   &REG &REG*    &LDA     &QDA     &KNN(10) &KNN(20) &ANN \\ \hline 
+訓練& 93.23\% &94.76\% &93.23\% &95.69\% &95.17\% &94.90\% &94.04\%   \\ 	
+測試& 93.53\% &94.75\% &93.53\% &95.17\% &95.00\% &95.00\% &92.39\%   \\ 		
+		\hline					
+		\end{tabular}
+	\end{table}
+	在表\ref{tab:dataset2_result}\ 中，訓練正確率最高為QDA模型，而測試正確率最高同樣也是QDA模型，可見在常態分配以及共變異數矩陣不等時，完全符合QDA的假設前提，因此與理論相符，擁有最好的分類表現，反而LDA相較之下，正確率則是低了不少，由圖\ref{fig:dataset2_result}\ 可見所有模型之間的差異。
+	\begin{figure}[H]	
+		\centering	 			 	 
+   		\includegraphics[width=1\textwidth]{\imgdir dataset2_result.jpg} 
+   		\caption{所有模型正確率 以資料集二為例}
+   		\label{fig:dataset2_result}   			 		 
+	\end{figure}
+	而ANN在圖\ref{fig:dataset2_result}\ 同樣能清楚看出，測試時表現不理想，但訓練時的正確率卻不低，可能在訓練模型上，非線性程度過高，導致過度訓練的情形發生，因此才有此現象。
+}
+
+\item{\textbf{資料集三：}\\
+最後，我們以資料集三做實作，資料集三屬於兩非常態資料集，目測觀察可能分類線一樣是非線性曲線，而由MATLAB執行結果如表\ref{tab:dataset3_result}：
+\begin{table}[H]				
+		\caption{所有分類器比較\_ 以資料集一為例}\label{tab:dataset3_result}
+		\centering
+		\extrarowheight=10pt
+		\begin{tabular}{lrrrrrrr} 					
+		\hline
+正確率   &REG &REG*    &LDA     &QDA     &KNN(10) &KNN(20) &ANN \\ \hline 
+訓練& 93.67\% &95.86\% &93.67\% &93.76\% &96.05\% &95.63\% &94.58\%   \\ 	
+測試& 92.92\% &95.03\% &92.92\% &93.22\% &95.55\% &95.28\% &93.80\%   \\ 		
+		\hline					
+		\end{tabular}
+	\end{table}
+	表\ref{tab:dataset3_result}\ 可見，KNN在此範例資料集表現良好，反而同樣建立在常態分配假設下的LDA與QDA相對而言就無法有較高的正確率，而在此兩者皆為非常態模型下，KNN亦能準確預測，並且在前兩資料集中，KNN表現相較之下正確率也偏高，可見在無任何假設下的KNN能對更廣泛的資料集有好的預測，由圖\ref{fig:dataset3_result}\ 也可以明顯看出KNN正確率之高。
+	\begin{figure}[H]	
+		\centering	 			 	 
+   		\includegraphics[width=1\textwidth]{\imgdir dataset3_result.jpg} 
+   		\caption{所有模型正確率 以資料集三為例}
+   		\label{fig:dataset3_result}   			 		 
+	\end{figure}
+	而圖\ref{fig:dataset3_result}\ 也可見，加廣型迴歸也有高水準之正確率表現，由於其僅假設模型為非線性模型，因此對於此資料集而言，也較為適合。
+}
+\end{enumerate}
+\newpage
+\section{結論}
+結合三種資料集之所有模型正確率，可以得到表\ref{tab:all_result}\ 如下所示：
+\begin{table}[H]				
+		\caption{所有分類器之正確率}\label{tab:all_result}
+		\centering
+		\extrarowheight=10pt
+		\begin{tabular}{l|rr|rr|rr} 
+		\hline
+\multicolumn{3}{r}{資料集一}	&\multicolumn{2}{c}{資料集二}&\multicolumn{2}{c}{資料集三}\\
+		\hline		
+   正確率&訓練 & 測試 &訓練 & 測試 &訓練 & 測試  \\ \hline 
+REG& 97.43\% &98.24\% &93.23\% &93.53\% &93.67\% & 92.92\% \\ 	
+REG*& 97.48\% &98.14\% &94.76\% &94.75\% &95.86\% &95.03\%   \\ 	
+LDA& 97.43\% &98.24\% &93.23\% &93.53\% &93.67\% &92.92\%   \\ 
+QDA& 97.42\% &98.23\% &95.69\% &95.17\% &93.76\% &93.22\%   \\ 
+KNN(10)& 97.44\% &98.19\% &95.17\% &95.00\% &96.05\% &95.55\%   \\ 
+KNN(20)& 97.41\% &98.30\% &94.90\% &95.00\% &95.63\% &95.28\%   \\ 
+ANN& 95.73\% &92.33\% &94.04\% &92.39\% &94.58\% &93.80\%   \\ 	
+
+ 
+		\hline					
+		\end{tabular}
+	\end{table}		
+		KNN在所有資料集中的正確率，都在水準之上，而需要建構在假設下的LDA與QDA則是有著起起伏伏的正確率表現，而ANN在此三種資料集中，也不盡理想，可能原因是三種資料集都無法讓ANN展現其高度非線性之模型，而由表\ref{tab:all_result}\ 我們便可對於先前所講到的分類器，有著更深入的認知，在不同資料情形下，分類器之選擇也是極為重要的議題之一，倘若在分類器正確率差異不遠的情形下，也可以選擇成本，效率較好的分類器，如REG或LDA，由此例同時也可證明MATLAB在不同模型進行下，能夠快速進行多次建模預測之處理，並且同時繪圖以讓大眾理解，在進行理論數學探討的同時，以實作圖形輔助，驗證理論並且加強記憶，不僅僅對於分類器之學習，對於其他廣泛議題仍有相當高的助益。
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
